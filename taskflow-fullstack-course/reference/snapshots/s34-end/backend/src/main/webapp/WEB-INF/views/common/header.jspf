@@ -1,0 +1,23 @@
+<%--
+  The top of every page, pasted in at TRANSLATION time by <%@ include file="…" %> (33.10).
+  S34: no Java left. ${pageTitle} is a REQUEST attribute set by the controller (EL can't see local variables),
+  and EL does NOT escape (34.18), so the title goes through Html.escape, called as a static method (34.17).
+--%>
+<%@ page import="com.taskflow.web.Html" %>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>${Html.escape(pageTitle)} · TaskFlow Admin</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app.css">
+</head>
+<body>
+<div class="page">
+  <header class="page__header">
+    <span class="page__brand">TaskFlow Admin</span>
+    <nav class="page__nav">
+      <a class="page__nav-link" href="${pageContext.request.contextPath}/tasks">Tasks</a>
+      <a class="page__nav-link" href="${pageContext.request.contextPath}/tasks/new">New task</a>
+    </nav>
+  </header>
+  <main class="page__main">

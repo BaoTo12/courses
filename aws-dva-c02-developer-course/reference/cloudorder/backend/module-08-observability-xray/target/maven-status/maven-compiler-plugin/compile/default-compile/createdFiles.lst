@@ -1,0 +1,5 @@
+com\cloudarchitect\dvac02\observability\service\CloudWatchLogsInsightsHelper.class
+com\cloudarchitect\dvac02\observability\service\XRayTracingService.class
+com\cloudarchitect\dvac02\observability\service\EmfMetricsEmitter.class
+com\cloudarchitect\dvac02\observability\service\XRayTracingService$TraceContext.class
+com\cloudarchitect\dvac02\observability\service\XRayTracingService$SubsegmentSummary.class

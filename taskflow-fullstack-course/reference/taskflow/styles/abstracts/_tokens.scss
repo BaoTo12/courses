@@ -1,0 +1,79 @@
+@use 'sass:map';
+@use 'sass:list';
+@use 'variables' as *;
+
+$breakpoints: (
+  'sm': 480px,
+  'md': 768px,
+  'lg': 1024px,
+  'xl': 1280px,
+);
+
+// Keys mirror the backend enums (TaskStatus / Priority), kebab-cased.
+$status-colors: (
+  'todo':        ('bg': #e0e7ff, 'fg': #3730a3),
+  'in-progress': ('bg': #fef3c7, 'fg': #92400e),
+  'done':        ('bg': #dcfce7, 'fg': #166534),
+);
+
+$priority-colors: (
+  'low': #14b8a6,
+  'medium': #f59e0b,
+  'high': #ef4444,
+);
+
+// Semantic colour tokens per theme → emitted as --color-<name> in base/_root.scss
+$themes: (
+  'light': (
+    'primary':       map.get($palette, 'indigo-600'),
+    'primary-hover': #4338ca,
+    'on-primary':    map.get($palette, 'white'),
+    'danger':        map.get($palette, 'red-600'),
+    'danger-hover':  #b91c1c,
+    'success':       #16a34a,
+    'warning':       #d97706,
+    'text':          map.get($palette, 'slate-900'),
+    'text-muted':    map.get($palette, 'slate-500'),
+    'border':        map.get($palette, 'slate-200'),
+    'surface':       map.get($palette, 'white'),
+    'surface-muted': map.get($palette, 'slate-100'),
+    'background':    map.get($palette, 'slate-50'),
+    'focus-ring':    rgba(79, 70, 229, 0.25),
+  ),
+  'dark': (
+    'primary':       map.get($palette, 'indigo-400'),
+    'primary-hover': #a5b4fc,
+    'on-primary':    map.get($palette, 'slate-900'),
+    'danger':        map.get($palette, 'red-400'),
+    'danger-hover':  #fca5a5,
+    'success':       #4ade80,
+    'warning':       #fbbf24,
+    'text':          map.get($palette, 'slate-100'),
+    'text-muted':    map.get($palette, 'slate-400'),
+    'border':        map.get($palette, 'slate-700'),
+    'surface':       map.get($palette, 'slate-800'),
+    'surface-muted': #273449,
+    'background':    map.get($palette, 'slate-900'),
+    'focus-ring':    rgba(129, 140, 248, 0.35),
+  ),
+);
+
+// ─── Guard: every theme must define exactly the same tokens as 'light' ───
+$-reference-keys: map.keys(map.get($themes, 'light'));
+
+@each $theme-name, $theme in $themes {
+  $missing: ();
+  @each $key in $-reference-keys {
+    @if not map.has-key($theme, $key) {
+      $missing: list.append($missing, $key, $separator: comma);
+    }
+  }
+  @if list.length($missing) > 0 {
+    @error 'Theme "#{$theme-name}" is missing token(s): #{$missing}';
+  }
+  @each $key in map.keys($theme) {
+    @if not list.index($-reference-keys, $key) {
+      @error 'Theme "#{$theme-name}" defines "#{$key}", which the light theme does not have.';
+    }
+  }
+}

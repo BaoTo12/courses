@@ -1,0 +1,22 @@
+<%--
+  S33 (33.10): the top of every page, pasted in at TRANSLATION time by <%@ include file="…" %>.
+  A .jspf ("JSP fragment") is never compiled on its own: it becomes part of the including page's servlet,
+  so it can use that page's local variables. Here: pageTitle, which the including page declares first.
+--%>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title><%= com.taskflow.web.Html.escape(pageTitle) %> · TaskFlow Admin</title>
+  <link rel="stylesheet" href="<%= request.getContextPath() %>/static/css/app.css">
+</head>
+<body>
+<div class="page">
+  <header class="page__header">
+    <span class="page__brand">TaskFlow Admin</span>
+    <nav class="page__nav">
+      <a class="page__nav-link" href="<%= request.getContextPath() %>/tasks">Tasks</a>
+      <a class="page__nav-link" href="<%= request.getContextPath() %>/tasks/new">New task</a>
+    </nav>
+  </header>
+  <main class="page__main">

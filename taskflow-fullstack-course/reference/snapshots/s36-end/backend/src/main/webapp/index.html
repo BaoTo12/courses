@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- S28: a STATIC page, served by Tomcat's DefaultServlet. Its only job: prove the WAR is deployed and the CSS loads. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaskFlow Admin</title>
+    <!-- RELATIVE link: works at any context path (/taskflow, /, /anything). An absolute /static/… would break (28.10). -->
+    <link rel="stylesheet" href="static/css/app.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="page__header"><span class="page__brand">TaskFlow Admin</span></header>
+      <main class="page__main">
+        <h1 class="page__title">It works.</h1>
+        <p>The WAR is deployed on Tomcat 9. Servlets arrive in S30, JSP in S32.</p>
+        <p><span class="badge badge--done">Deployed</span> <button class="btn btn--primary btn--sm" type="button">A design-system button</button></p>
+      </main>
+      <footer class="page__footer">TaskFlow Admin</footer>
+    </div>
+  </body>
+</html>

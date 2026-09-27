@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Redux counter (no React, no build)</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; }
+      output { display: inline-block; min-width: 3ch; font-size: 2rem; font-weight: 700; }
+      button { font-size: 1rem; margin: 0.25rem; }
+      #log { font-family: ui-monospace, monospace; font-size: 0.85rem; white-space: pre; }
+    </style>
+  </head>
+  <body>
+    <h1>Redux counter</h1>
+    <p>Clicked: <output id="value">0</output> times</p>
+    <p>
+      <button id="increment">+</button>
+      <button id="decrement">−</button>
+      <button id="incrementIfOdd">Increment if odd</button>
+      <button id="incrementAsync">Increment async</button>
+      <button id="incrementBy5">+5</button>
+    </p>
+    <h2>Action log</h2>
+    <div id="log"></div>
+
+    <script>
+      // Redux's DEVELOPMENT build reads process.env.NODE_ENV, a Node-ism that bundlers (Vite) replace at
+      // build time. Without a bundler, we define it ourselves. 'development' = readable errors + extra checks.
+      window.process = { env: { NODE_ENV: 'development' } };
+    </script>
+    <script type="module">
+      // Redux 5 ships ES modules only (no UMD `<script>` build any more).
+      // redux.mjs = development build. redux.browser.mjs = minified production build (coded error messages).
+      import { createStore } from './node_modules/redux/dist/redux.mjs';
+
+      // ── 1. The initial state ────────────────────────────────────────────────
+      const initialState = { value: 0 };
+
+      // ── 2. The reducer: (state, action) → new state. Pure: no mutation, no side effects. ─
+      function counterReducer(state = initialState, action) {
+        switch (action.type) {
+          case 'counter/incremented':
+            return { ...state, value: state.value + 1 };
+          case 'counter/decremented':
+            return { ...state, value: state.value - 1 };
+          case 'counter/incrementedBy':
+            return { ...state, value: state.value + action.payload };
+          default:
+            return state; // unknown action (including Redux's own init action): state unchanged
+        }
+      }
+
+      // ── 3. The store. The 2nd argument hooks up the Redux DevTools extension if it's installed. ─
+      const store = createStore(counterReducer, window.__REDUX_DEVTOOLS_EXTENSION__?.());
+
+      // ── 4. The UI: a render function that reads the CURRENT state ─────────────
+      const valueEl = document.getElementById('value');
+      function render() {
+        valueEl.textContent = String(store.getState().value);
+      }
+      render(); // show the initial state
+      store.subscribe(render); // …and re-render after every dispatch
+
+      // A second, independent subscriber: an action log (subscribers don't know about each other).
+      const logEl = document.getElementById('log');
+      let lastAction = null;
+      store.subscribe(() => {
+        logEl.textContent += `${JSON.stringify(lastAction)} → ${JSON.stringify(store.getState())}\n`;
+      });
+
+      // ── 5. Dispatching actions in response to user input ─────────────────────
+      function dispatch(action) {
+        lastAction = action;
+        store.dispatch(action);
+      }
+      // Action creators: functions that build action objects (no magic).
+      const incremented = () => ({ type: 'counter/incremented' });
+      const decremented = () => ({ type: 'counter/decremented' });
+      const incrementedBy = (amount) => ({ type: 'counter/incrementedBy', payload: amount });
+
+      document.getElementById('increment').addEventListener('click', () => dispatch(incremented()));
+      document.getElementById('decrement').addEventListener('click', () => dispatch(decremented()));
+      document.getElementById('incrementBy5').addEventListener('click', () => dispatch(incrementedBy(5)));
+      document.getElementById('incrementIfOdd').addEventListener('click', () => {
+        // Reading state to DECIDE whether to dispatch is fine (the decision lives outside the reducer).
+        if (store.getState().value % 2 !== 0) dispatch(incremented());
+      });
+      document.getElementById('incrementAsync').addEventListener('click', () => {
+        // Async work happens OUTSIDE the reducer; when it's done, we dispatch a plain action.
+        setTimeout(() => dispatch(incremented()), 1000);
+      });
+
+      // For experimenting in the console (a learning aid, not app code). Use dispatch(…) there
+      // (not store.dispatch) so the action log knows which action ran.
+      window.store = store;
+      window.dispatch = dispatch;
+      window.actions = { incremented, decremented, incrementedBy };
+    </script>
+  </body>
+</html>

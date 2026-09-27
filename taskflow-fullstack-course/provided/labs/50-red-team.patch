@@ -1,0 +1,108 @@
+diff --git a/backend/src/main/java/com/taskflow/web/Redirects.java b/backend/src/main/java/com/taskflow/web/Redirects.java
+index 3c5d74d..bb1d661 100644
+--- a/backend/src/main/java/com/taskflow/web/Redirects.java
++++ b/backend/src/main/java/com/taskflow/web/Redirects.java
+@@ -13,9 +13,9 @@ public final class Redirects {
+   private Redirects() {}
+ 
+   public static String safeLocalPath(HttpServletRequest request, String target, String fallback) {
+-    String appRoot = request.getContextPath() + "/";
++    String appRoot = "/";
+     if (target == null || !target.startsWith(appRoot)) return fallback;
+-    if (target.startsWith("//") || target.contains("\\") || target.contains("\r") || target.contains("\n")) return fallback;
++    if (target.contains("\r") || target.contains("\n")) return fallback;
+     return target;
+   }
+ }
+diff --git a/backend/src/main/java/com/taskflow/web/api/TaskApiServlet.java b/backend/src/main/java/com/taskflow/web/api/TaskApiServlet.java
+index 98aa5ba..73354d8 100644
+--- a/backend/src/main/java/com/taskflow/web/api/TaskApiServlet.java
++++ b/backend/src/main/java/com/taskflow/web/api/TaskApiServlet.java
+@@ -62,7 +62,7 @@ public class TaskApiServlet extends ApiServlet {
+     else if (path.size() == 1) {
+       long id = id(path.get(0), "Task not found");
+       switch (method) {
+-        case "GET" -> Json.write(response, 200, TaskDto.from(find(id, user)));
++        case "GET" -> Json.write(response, 200, TaskDto.from(service.taskForDiagnostics(id).orElseThrow(() -> ApiException.notFound("Task not found"))));
+         case "PUT" -> update(request, response, id, user, false);
+         case "PATCH" -> update(request, response, id, user, true);
+         case "DELETE" -> delete(response, id, user);
+diff --git a/backend/src/main/java/com/taskflow/web/auth/LoginServlet.java b/backend/src/main/java/com/taskflow/web/auth/LoginServlet.java
+index 3c48aaa..b0070f0 100644
+--- a/backend/src/main/java/com/taskflow/web/auth/LoginServlet.java
++++ b/backend/src/main/java/com/taskflow/web/auth/LoginServlet.java
+@@ -51,7 +51,6 @@ public class LoginServlet extends HttpServlet {
+     AuthService.LoginResult result = auth.login(username, request.getParameter("password"), request.getRemoteAddr());
+     switch (result.outcome()) {
+       case SUCCESS -> {
+-        request.changeSessionId();                                  // 🛡 session fixation (41.11): same data, new id
+         HttpSession session = request.getSession();
+         session.setAttribute(SessionRegistry.LOGIN_IP, request.getRemoteAddr());   // S45: for a later SESSION_EXPIRED event
+         session.setAttribute(CurrentUser.SESSION_KEY, result.user());
+diff --git a/backend/src/main/java/com/taskflow/web/filters/CorsFilter.java b/backend/src/main/java/com/taskflow/web/filters/CorsFilter.java
+index 8ea411e..0eb6384 100644
+--- a/backend/src/main/java/com/taskflow/web/filters/CorsFilter.java
++++ b/backend/src/main/java/com/taskflow/web/filters/CorsFilter.java
+@@ -43,7 +43,7 @@ public class CorsFilter implements Filter {
+     String origin = request.getHeader("Origin");
+     boolean preflight = "OPTIONS".equals(request.getMethod()) && request.getHeader("Access-Control-Request-Method") != null;
+     response.addHeader("Vary", "Origin");
+-    if (origin != null && allowedOrigins.contains(origin)) {
++    if (origin != null) {
+       response.setHeader("Access-Control-Allow-Origin", origin);
+       response.setHeader("Access-Control-Allow-Credentials", "true");
+       if (preflight) {
+diff --git a/backend/src/main/java/com/taskflow/web/filters/CsrfDoubleSubmitFilter.java b/backend/src/main/java/com/taskflow/web/filters/CsrfDoubleSubmitFilter.java
+index 702f3a3..410c71d 100644
+--- a/backend/src/main/java/com/taskflow/web/filters/CsrfDoubleSubmitFilter.java
++++ b/backend/src/main/java/com/taskflow/web/filters/CsrfDoubleSubmitFilter.java
+@@ -32,8 +32,8 @@ public class CsrfDoubleSubmitFilter implements Filter {
+     if (!SAFE_METHODS.contains(request.getMethod())) {
+       String cookie = cookie(request);
+       String header = request.getHeader(XsrfCookie.HEADER);
+-      if (cookie == null || cookie.isEmpty() || header == null
+-          || !MessageDigest.isEqual(cookie.getBytes(StandardCharsets.UTF_8), header.getBytes(StandardCharsets.UTF_8))) {
++      if (header != null && (cookie == null || cookie.isEmpty()
++          || !MessageDigest.isEqual(cookie.getBytes(StandardCharsets.UTF_8), header.getBytes(StandardCharsets.UTF_8)))) {
+         throw ApiException.csrfInvalid();
+       }
+     }
+diff --git a/backend/src/main/webapp/WEB-INF/views/tasks/task-row.jspf b/backend/src/main/webapp/WEB-INF/views/tasks/task-row.jspf
+index f5b1b78..1941e8f 100644
+--- a/backend/src/main/webapp/WEB-INF/views/tasks/task-row.jspf
++++ b/backend/src/main/webapp/WEB-INF/views/tasks/task-row.jspf
+@@ -13,7 +13,7 @@
+ <%@ taglib prefix="tf" uri="urn:taskflow:tags" %>
+             <tr class="${task.isOverdue(today) ? 'task-row--overdue' : ''}">
+               <td class="row-number">${rowOffset + row.count}</td>
+-              <td><a href="<c:url value='/tasks/view?id=${task.id}'/>"><c:out value="${task.title}"/></a></td>
++              <td><a href="<c:url value='/tasks/view?id=${task.id}'/>">${task.title}</a></td>
+               <td><t:statusBadge status="${task.status}"/></td>
+               <td><fmt:message key="priority.${task.priority}"/></td>
+               <td>
+diff --git a/frontend/src/features/comments/CommentsSection.tsx b/frontend/src/features/comments/CommentsSection.tsx
+index 8e3a27b..4d589ea 100644
+--- a/frontend/src/features/comments/CommentsSection.tsx
++++ b/frontend/src/features/comments/CommentsSection.tsx
+@@ -64,7 +64,7 @@ export function CommentsSection({ taskId }: { taskId: number }) {
+         {comments.map((comment) => (
+           <li key={comment.id} className={styles.comment}>
+             {/* Plain text: React escapes it (26.02). Formatting: DOMPurify first, always (26.04). */}
+-            {showFormatting ? <SanitizedHtml html={comment.body} /> : <p>{comment.body}</p>}
++            {showFormatting ? <div dangerouslySetInnerHTML={{ __html: comment.body }} /> : <p>{comment.body}</p>}
+             <span className="text-muted">{formatDate(comment.createdAt.slice(0, 10), i18n.language)}</span>
+           </li>
+         ))}
+diff --git a/frontend/src/security/safeUrl.ts b/frontend/src/security/safeUrl.ts
+index b766fa6..2c03810 100644
+--- a/frontend/src/security/safeUrl.ts
++++ b/frontend/src/security/safeUrl.ts
+@@ -16,7 +16,7 @@ export function safeHref(raw: string, base = window.location.origin): string | u
+   } catch {
+     return undefined; // not a URL at all
+   }
+-  return ALLOWED_PROTOCOLS.has(url.protocol) ? url.href : undefined;
++  return raw.toLowerCase().startsWith('javascript:') ? undefined : url.href;
+ }
+ 
+ /** True when the URL leaves our origin: open it in a new tab, without giving it `window.opener`. */

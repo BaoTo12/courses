@@ -1,0 +1,5 @@
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-05-s3-caching\src\main\java\com\cloudarchitect\dvac02\caching\handler\S3InvoiceNotificationHandler.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-05-s3-caching\src\main\java\com\cloudarchitect\dvac02\caching\model\CachedOrder.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-05-s3-caching\src\main\java\com\cloudarchitect\dvac02\caching\model\InvoiceMetadata.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-05-s3-caching\src\main\java\com\cloudarchitect\dvac02\caching\service\InvoiceStorageService.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-05-s3-caching\src\main\java\com\cloudarchitect\dvac02\caching\service\OrderCacheService.java

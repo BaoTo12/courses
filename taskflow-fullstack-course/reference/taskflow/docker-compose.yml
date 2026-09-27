@@ -1,0 +1,42 @@
+# S28 (28.01) · PROVIDED. The Docker option for the backend environment: MySQL 8 + Tomcat 9 (JDK 17).
+# Start:  docker compose up -d        Stop: docker compose down        Wipe the database: docker compose down -v
+# The native-install option (installers) is in 28.01; both give the same URLs and credentials.
+services:
+  mysql:
+    image: mysql:8.4                      # MySQL 8 LTS line
+    environment:
+      MYSQL_ROOT_PASSWORD: root_dev_only  # ⚠️ development only
+      TZ: UTC
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - "3306:3306"                       # so the IDE / MySQL Workbench / the app on the host can connect
+    volumes:
+      # Scripts run ONCE, in name order, the first time the data volume is empty: 01 → 02 → 03 → 04.
+      - ./backend/db:/docker-entrypoint-initdb.d:ro
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_dev_only"]
+      interval: 5s
+      retries: 20
+
+  tomcat:
+    image: tomcat:9.0-jdk17-temurin       # Tomcat 9 = Servlet 4.0 / javax.* (28.02)
+    ports:
+      - "8080:8080"
+    environment:
+      TZ: UTC
+      # Where S36's DataSourceProvider finds the database from inside the Docker network.
+      TASKFLOW_DB_URL: jdbc:mysql://mysql:3306/taskflow?serverTimezone=UTC
+      TASKFLOW_DB_USER: taskflow_app
+      TASKFLOW_DB_PASSWORD: taskflow_dev_pw
+    volumes:
+      # The WAR Maven builds (mvn package) → Tomcat auto-deploys it at /taskflow (28.10). Rebuild → redeploy.
+      - ./backend/target/taskflow.war:/usr/local/tomcat/webapps/taskflow.war
+      # S43 (43.10): our server.xml: Tomcat's own error pages without stack traces or the server version.
+      - ./backend/tomcat/server.xml:/usr/local/tomcat/conf/server.xml:ro
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:

@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    commands:
+      - echo "Installing Java 21 build environment..."
+      - mvn -version
+  pre_build:
+    commands:
+      - echo "Executing automated unit tests and code verification..."
+      - mvn clean compile test
+  build:
+    commands:
+      - echo "Packaging CloudOrder production artifact..."
+      - mvn package -DskipTests
+  post_build:
+    commands:
+      - echo "Build and verification succeeded on $(date)"
+
+artifacts:
+  files:
+    - target/*.jar
+    - appspec.yaml
+    - template.yaml
+  discard-paths: no
+
+cache:
+  paths:
+    - '/root/.m2/**/*'

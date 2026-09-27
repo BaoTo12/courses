@@ -1,0 +1,5 @@
+com\cloudarchitect\dvac02\caching\service\OrderCacheService.class
+com\cloudarchitect\dvac02\caching\handler\S3InvoiceNotificationHandler.class
+com\cloudarchitect\dvac02\caching\model\InvoiceMetadata.class
+com\cloudarchitect\dvac02\caching\service\InvoiceStorageService.class
+com\cloudarchitect\dvac02\caching\model\CachedOrder.class

@@ -1,0 +1,14 @@
+{
+  "name": "taskflow-mock-api",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.mjs",
+    "start:secure": "node server.mjs --secure",
+    "reset": "node server.mjs --reset"
+  },
+  "type": "module",
+  "dependencies": {
+    "json-server": "^0.17.4"
+  },
+  "private": true
+}

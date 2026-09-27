@@ -1,0 +1,89 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 1: Synchronous Order Ingestion REST API
+  Demonstrating greedy path variables, CORS, Java 21 Lambda, and raw JSON IAM execution role.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1769 # Exactly 1 full vCPU thread allocated to Java JVM
+    Runtime: java21
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        STAGE: Prod
+        LOG_LEVEL: INFO
+
+Resources:
+  # 1. API Gateway REST API Ingress
+  OrderApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+        AllowOrigin: "'*'"
+      TracingEnabled: true
+
+  # 2. Serverless Function Handler
+  OrderApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.api.OrderApiHandler::handleRequest
+      Role: !GetAtt OrderApiFunctionRole.Arn
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: Canary10Percent5Minutes
+      Events:
+        OrderGreedyRoute:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OrderApi
+            Path: /orders/{proxy+}
+            Method: ANY
+        OrderRootRoute:
+          Type: Api
+          Properties:
+            RestApiId: !Ref OrderApi
+            Path: /orders
+            Method: ANY
+
+  # 3. Explicit Raw JSON IAM Execution Role (Bypassing managed policies)
+  OrderApiFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudOrderExplicitLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+
+Outputs:
+  OrderApiEndpoint:
+    Description: "API Gateway endpoint URL for Prod stage"
+    Value: !Sub "https://${OrderApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/orders/electronics?region=us-east-1"
+  OrderApiFunctionArn:
+    Description: "OrderApi Lambda Function ARN"
+    Value: !GetAtt OrderApiFunction.Arn
+  OrderApiFunctionRoleArn:
+    Description: "Raw JSON IAM Execution Role ARN"
+    Value: !GetAtt OrderApiFunctionRole.Arn

@@ -1,0 +1,184 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 6: Amazon Cognito User Pool, App Client,
+  AWS KMS Customer Managed Key, Secrets Manager, and API Gateway Lambda Authorizer.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment tier.
+
+Globals:
+  Function:
+    Runtime: java21
+    Architectures:
+      - arm64
+    MemorySize: 512
+    Timeout: 10
+
+Resources:
+
+  # ----------------------------------------------------------------------------
+  # 1. Amazon Cognito User Pool & App Client
+  # ----------------------------------------------------------------------------
+  CloudOrderUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub cloudorder-users-${Environment}
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: true
+          TemporaryPasswordValidityDays: 7
+      Schema:
+        - Name: customerId
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+        - Name: role
+          AttributeDataType: String
+          Mutable: true
+          Required: false
+
+  CloudOrderUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: !Sub cloudorder-web-client-${Environment}
+      UserPoolId: !Ref CloudOrderUserPool
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_PASSWORD_AUTH
+      PreventUserExistenceErrors: ENABLED
+      AccessTokenValidity: 1
+      IdTokenValidity: 1
+      TokenValidityUnits:
+        AccessToken: hours
+        IdToken: hours
+
+  # ----------------------------------------------------------------------------
+  # 2. AWS KMS Customer Master Key (CMK) for Envelope Encryption
+  # ----------------------------------------------------------------------------
+  PaymentKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: KMS Customer Managed Key for CloudOrder Payment Envelope Encryption
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: '2012-10-17'
+        Statement:
+          # Root Account Administration
+          - Sid: EnableIamUserPermissions
+            Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${AWS::AccountId}:root'
+            Action: 'kms:*'
+            Resource: '*'
+
+          # Service Cryptographic Access
+          - Sid: AllowCryptographicOperations
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt AuthorizerFunctionRole.Arn
+            Action:
+              - 'kms:GenerateDataKey*'
+              - 'kms:Decrypt'
+              - 'kms:DescribeKey'
+            Resource: '*'
+
+  PaymentKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub 'alias/cloudorder-payment-key-${Environment}'
+      TargetKeyId: !Ref PaymentKmsKey
+
+  # ----------------------------------------------------------------------------
+  # 3. AWS Secrets Manager Secret
+  # ----------------------------------------------------------------------------
+  PaymentGatewaySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub 'cloudorder/payment-gateway-${Environment}'
+      Description: Third-party payment gateway integration secrets
+      KmsKeyId: !Ref PaymentKmsKey
+      SecretString: '{"apiKey":"sk_live_prod_sample_key_99999"}'
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+
+  # ----------------------------------------------------------------------------
+  # 4. IAM Execution Role for Lambda Authorizer (Raw JSON Least Privilege)
+  # ----------------------------------------------------------------------------
+  AuthorizerFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cloudorder-authorizer-role-${Environment}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AuthorizerExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource: !Ref PaymentGatewaySecret
+
+  # ----------------------------------------------------------------------------
+  # 5. Lambda Custom Token Authorizer Function
+  # ----------------------------------------------------------------------------
+  CognitoAuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub cloudorder-token-authorizer-${Environment}
+      Handler: com.cloudarchitect.dvac02.security.handler.CognitoJwtAuthorizerHandler::handleRequest
+      CodeUri: .
+      Role: !GetAtt AuthorizerFunctionRole.Arn
+      Environment:
+        Variables:
+          COGNITO_ISSUER: !Sub 'https://cognito-idp.${AWS::Region}.amazonaws.com/${CloudOrderUserPool}'
+          COGNITO_CLIENT_ID: !Ref CloudOrderUserPoolClient
+
+Outputs:
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref CloudOrderUserPool
+
+  UserPoolClientId:
+    Description: Cognito User Pool App Client ID
+    Value: !Ref CloudOrderUserPoolClient
+
+  KmsKeyArn:
+    Description: Payment KMS CMK Key ARN
+    Value: !GetAtt PaymentKmsKey.Arn
+
+  SecretArn:
+    Description: Payment Gateway Secrets Manager ARN
+    Value: !Ref PaymentGatewaySecret
+
+  AuthorizerFunctionArn:
+    Description: ARN of the Lambda Token Authorizer
+    Value: !GetAtt CognitoAuthorizerFunction.Arn

@@ -1,0 +1,214 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 3: Distributed Multi-Step Order Checkout Saga with AWS Step Functions.
+  Demonstrating Standard Workflows, Amazon States Language (ASL), Task retry exponential backoff,
+  JSONPath payload transformations, compensating transactions, and raw JSON IAM execution roles.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1769 # Exactly 1 full vCPU thread allocated to Java 21 JVM
+    Runtime: java21
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        STAGE: Prod
+        LOG_LEVEL: INFO
+
+Resources:
+  # ============================================================================
+  # 1. Lambda Functions (Saga Worker Tasks)
+  # ============================================================================
+  ReserveInventoryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.workflow.handler.ReserveInventoryHandler::handleRequest
+      Role: !GetAtt SagaLambdaExecutionRole.Arn
+
+  ProcessPaymentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.workflow.handler.ProcessPaymentHandler::handleRequest
+      Role: !GetAtt SagaLambdaExecutionRole.Arn
+
+  CancelInventoryCompensateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.workflow.handler.CancelInventoryCompensateHandler::handleRequest
+      Role: !GetAtt SagaLambdaExecutionRole.Arn
+
+  # ============================================================================
+  # 2. Raw JSON IAM Execution Roles (Bypassing managed policies)
+  # ============================================================================
+  SagaLambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudOrderExplicitLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+
+  OrderCheckoutStateMachineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudOrderStepFunctionsLambdaInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource:
+                  - !GetAtt ReserveInventoryFunction.Arn
+                  - !GetAtt ProcessPaymentFunction.Arn
+                  - !GetAtt CancelInventoryCompensateFunction.Arn
+        - PolicyName: CloudOrderStepFunctionsLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogDelivery
+                  - logs:GetLogDelivery
+                  - logs:UpdateLogDelivery
+                  - logs:DeleteLogDelivery
+                  - logs:ListLogDeliveries
+                  - logs:PutResourcePolicy
+                  - logs:DescribeResourcePolicies
+                  - logs:DescribeLogGroups
+                Resource: "*"
+
+  # ============================================================================
+  # 3. Step Functions State Machine (Saga Orchestration)
+  # ============================================================================
+  OrderCheckoutStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Properties:
+      Name: CloudOrderCheckoutSaga
+      Type: STANDARD
+      Role: !GetAtt OrderCheckoutStateMachineRole.Arn
+      Definition:
+        Comment: "CloudOrder Distributed Saga: Reserve Inventory -> Process Payment -> Compensate on Failure"
+        StartAt: ReserveInventory
+        States:
+          # --- State 1: Reserve Inventory Task ---
+          ReserveInventory:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName: !GetAtt ReserveInventoryFunction.Arn
+              Payload.$: "$"
+            ResultSelector:
+              reservationId.$: "$.Payload.reservationId"
+              status.$: "$.Payload.status"
+            ResultPath: "$.inventoryResult"
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                  - States.TaskFailed
+                IntervalSeconds: 2
+                MaxAttempts: 2
+                BackoffRate: 2.0
+            Catch:
+              - ErrorEquals:
+                  - InventoryUnavailableException
+                  - States.ALL
+                ResultPath: "$.error"
+                Next: OrderFailedState
+            Next: ProcessPayment
+
+          # --- State 2: Process Payment Task ---
+          ProcessPayment:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName: !GetAtt ProcessPaymentFunction.Arn
+              Payload.$: "$"
+            ResultSelector:
+              paymentId.$: "$.Payload.paymentId"
+              status.$: "$.Payload.status"
+            ResultPath: "$.paymentResult"
+            Retry:
+              - ErrorEquals:
+                  - Lambda.ServiceException
+                  - Lambda.AWSLambdaException
+                IntervalSeconds: 2
+                MaxAttempts: 3
+                BackoffRate: 2.0
+            Catch:
+              - ErrorEquals:
+                  - PaymentDeclinedException
+                  - States.ALL
+                ResultPath: "$.error"
+                Next: CompensateInventory
+            Next: OrderSucceededState
+
+          # --- State 3: Compensating Transaction (Rollback) ---
+          CompensateInventory:
+            Type: Task
+            Resource: arn:aws:states:::lambda:invoke
+            Parameters:
+              FunctionName: !GetAtt CancelInventoryCompensateFunction.Arn
+              Payload.$: "$"
+            ResultPath: "$.compensationResult"
+            Next: OrderRolledBackState
+
+          # --- Terminal States ---
+          OrderSucceededState:
+            Type: Succeed
+
+          OrderRolledBackState:
+            Type: Fail
+            Cause: "Payment authorization declined. Compensating inventory transactions completed."
+            Error: "PaymentDeclinedAndCompensated"
+
+          OrderFailedState:
+            Type: Fail
+            Cause: "Inventory reservation failed. Order aborted."
+            Error: "InventoryUnavailable"
+
+Outputs:
+  OrderCheckoutStateMachineArn:
+    Description: "Step Functions OrderCheckoutStateMachine ARN"
+    Value: !Ref OrderCheckoutStateMachine
+  ReserveInventoryFunctionArn:
+    Description: "ReserveInventoryFunction ARN"
+    Value: !GetAtt ReserveInventoryFunction.Arn
+  ProcessPaymentFunctionArn:
+    Description: "ProcessPaymentFunction ARN"
+    Value: !GetAtt ProcessPaymentFunction.Arn
+  CancelInventoryCompensateFunctionArn:
+    Description: "CancelInventoryCompensateFunction ARN"
+    Value: !GetAtt CancelInventoryCompensateFunction.Arn

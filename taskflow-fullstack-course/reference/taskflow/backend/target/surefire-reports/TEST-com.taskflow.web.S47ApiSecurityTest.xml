@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.taskflow.web.S47ApiSecurityTest" time="8.601" tests="8" errors="0" skipped="0" failures="3">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="catalina.useNaming" value="false"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Saigon"/>
+    <property name="user.country.format" value="VN"/>
+    <property name="taskflow.db.url" value="jdbc:mysql://localhost:49211/taskflow?serverTimezone=UTC"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
+    <property name="sun.java.command" value="C:\Users\Admin\AppData\Local\Temp\surefire4788928456033793601\surefirebooter-20260927065334808_3.jar C:\Users\Admin\AppData\Local\Temp\surefire4788928456033793601 2026-09-27T06-53-34_586-jvmRun1 surefire-20260927065334808_1tmp surefire_0-20260927065334808_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="S46JsonApiTest,S47ApiSecurityTest"/>
+    <property name="surefire.test.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Admin"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="taskflow.db.password" value="taskflow_dev_pw"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\Admin\AppData\Local\Temp\surefire4788928456033793601\surefirebooter-20260927065334808_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.9+7-LTS-338"/>
+    <property name="user.name" value="Admin"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\Admin\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\Admin\AppData\Local\Temp\"/>
+    <property name="catalina.home" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="java.version" value="21.0.9"/>
+    <property name="user.dir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.language.format" value="vi"/>
+    <property name="taskflow.db.user" value="taskflow_app"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="catalina.base" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;;C:\ProgramData\chocolatey\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Go\bin;C:\Program Files\k6\;C:\Program Files\Calibre2\;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Users\Admin\AppData\Local\agy\bin;C:\Program Files (x86)\Go\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.14\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\Admin\AppData\Local\Programs\Python\Python313\;C:\Users\Admin\AppData\Local\Programs\Python\Launcher\;C:\Users\Admin\.local\bin;C:\Users\Admin\AppData\Local\Microsoft\WindowsApps;C:\Users\Admin\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity\bin;C:\Users\Admin\AppData\Roaming\npm;C:\Users\Admin\go\bin;C:\tools\dart-sdk\bin;C:\Users\Admin\AppData\Local\Pub\Cache\bin;C:\Tools;C:\Program Files\JetBrains\IntelliJ IDEA 2026.1.1\bin;C:\Users\Admin\AppData\Local\Programs\Ollama;C:\flutter\bin;C:\Users\Admin\go\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity IDE\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313;C:\Program Files\nodejs;C:\Program Files\Git\mingw64\bin;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.9+7-LTS-338"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="corsAllowsOnlyTheListedOrigin" classname="com.taskflow.web.S47ApiSecurityTest" time="0.014">
+    <failure message="expected: &lt;403&gt; but was: &lt;204&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <403> but was: <204>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at com.taskflow.web.S47ApiSecurityTest.corsAllowsOnlyTheListedOrigin(S47ApiSecurityTest.java:134)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+    <system-out><![CDATA[06:54:15.036 INFO  [41ccd6a5cc8be31a] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 847ms
+06:54:15.353 INFO  [899d1d55dfcb4f44] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 300ms
+06:54:15.361 INFO  [af7e97dd5d615808] c.t.w.f.RequestLoggingFilter - OPTIONS /taskflow/api/tasks/1 204 0ms
+06:54:15.366 INFO  [2c6a5cc8b969f9e7] c.t.w.f.RequestLoggingFilter - OPTIONS /taskflow/api/tasks 204 0ms
+]]></system-out>
+    <system-err><![CDATA[thg 9 27, 2026 6:54:11 SA org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-auto-2"]
+thg 9 27, 2026 6:54:11 SA org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Tomcat]
+thg 9 27, 2026 6:54:11 SA org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.93]
+thg 9 27, 2026 6:54:12 SA org.apache.catalina.startup.ContextConfig getDefaultWebXmlFragment
+INFO: No global web.xml found
+thg 9 27, 2026 6:54:13 SA org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+thg 9 27, 2026 6:54:14 SA org.apache.catalina.core.ApplicationContext log
+INFO: TaskFlow started: the database is ready
+thg 9 27, 2026 6:54:14 SA org.apache.catalina.core.ApplicationContext log
+INFO: com.taskflow.web.HelloServlet: init(): HelloServlet created once, at deployment
+thg 9 27, 2026 6:54:14 SA org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-auto-2-50890"]
+]]></system-err>
+  </testcase>
+  <testcase name="anonymousApiCallsGetJson401NotARedirect" classname="com.taskflow.web.S47ApiSecurityTest" time="0.058">
+    <system-out><![CDATA[06:54:15.390 INFO  [31663c4b5d444eac] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/me 401 16ms
+06:54:15.414 INFO  [513d1cf62807d6f1] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/tasks 401 11ms
+06:54:15.425 INFO  [fa4599a0bd23cf2e] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 303 0ms
+]]></system-out>
+  </testcase>
+  <testcase name="theSpaLoginFlowSharesTheSessionWithThePortal" classname="com.taskflow.web.S47ApiSecurityTest" time="2.643">
+    <system-out><![CDATA[06:54:15.434 INFO  [ee0343ff992f5c01] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 2ms
+06:54:15.708 INFO  [5ad45205958d9da9] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 200 271ms
+06:54:15.713 INFO  [84ecabfe498a4386] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/me 200 2ms
+06:54:15.736 INFO  [d98a04fe9e455e8c] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/tasks 200 22ms
+06:54:18.049 INFO  [54123c629c5cf1d2] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 2311ms
+06:54:18.060 INFO  [30050b81952a00b7] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:18.067 INFO  [9229b777e6fdcca1] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/logout 204 6ms
+06:54:18.069 INFO  [15f937202355f3d4] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/me 401 0ms
+]]></system-out>
+  </testcase>
+  <testcase name="badCredentialsAndMissingFields" classname="com.taskflow.web.S47ApiSecurityTest" time="0.553">
+    <system-out><![CDATA[06:54:18.074 INFO  [6d3aa71f2184f218] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:18.347 INFO  [45f15f36b2b70a73] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 271ms
+06:54:18.352 INFO  [54196024ed79d06] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:18.616 INFO  [7f0534be1313685f] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 261ms
+06:54:18.621 INFO  [fe978a645436a28c] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:18.623 INFO  [a5dbb472fbed8e6b] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 400 0ms
+]]></system-out>
+  </testcase>
+  <testcase name="apiRejectionsAreAuditedWithTheRequestId" classname="com.taskflow.web.S47ApiSecurityTest" time="0.275">
+    <failure message="expected: &lt;403&gt; but was: &lt;204&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <403> but was: <204>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at com.taskflow.web.S47ApiSecurityTest.apiRejectionsAreAuditedWithTheRequestId(S47ApiSecurityTest.java:161)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+    <system-out><![CDATA[06:54:18.628 INFO  [8a5f99f743c02e99] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:18.884 INFO  [b6095b37d48ede5b] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 200 253ms
+06:54:18.897 INFO  [687efe7ec4de48dd] c.t.w.f.RequestLoggingFilter - DELETE /taskflow/api/tasks/23 204 11ms
+]]></system-out>
+  </testcase>
+  <testcase name="apiLoginIsThrottled" classname="com.taskflow.web.S47ApiSecurityTest" time="1.346">
+    <system-out><![CDATA[06:54:18.904 INFO  [ad2097ce8700de8f] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:19.185 INFO  [2312998fe08ee854] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 279ms
+06:54:19.189 INFO  [ab6e33b56b3efb01] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:19.448 INFO  [8c566e26351711ab] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 257ms
+06:54:19.452 INFO  [9ec4063188d2605d] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:19.717 INFO  [342173943f4d6dde] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 263ms
+06:54:19.721 INFO  [9e012a6b36e98f26] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:19.973 INFO  [e6c40e6508e678bd] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 250ms
+06:54:19.977 INFO  [213aaa1861bacebf] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:20.232 INFO  [a0460a764b909383] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 401 253ms
+06:54:20.236 INFO  [8602dba504debe8a] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:20.244 INFO  [f6a1283ae45e2ab8] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 429 6ms
+]]></system-out>
+  </testcase>
+  <testcase name="unsafeApiCallsNeedTheDoubleSubmitHeader" classname="com.taskflow.web.S47ApiSecurityTest" time="0.282">
+    <failure message="expected: &lt;403&gt; but was: &lt;201&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <403> but was: <201>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at com.taskflow.web.S47ApiSecurityTest.unsafeApiCallsNeedTheDoubleSubmitHeader(S47ApiSecurityTest.java:113)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+    <system-out><![CDATA[06:54:20.250 INFO  [2096f3388b2e7eeb] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+06:54:20.510 INFO  [d01ec94fae449958] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/auth/login 200 258ms
+06:54:20.527 INFO  [2fd3f69695502b88] c.t.w.f.RequestLoggingFilter - POST /taskflow/api/tasks 201 15ms
+]]></system-out>
+  </testcase>
+  <testcase name="theCsrfEndpointIssuesAReadableCookie" classname="com.taskflow.web.S47ApiSecurityTest" time="0.005">
+    <system-out><![CDATA[06:54:20.533 INFO  [9584d82a557fc0d6] c.t.w.f.RequestLoggingFilter - GET /taskflow/api/auth/csrf 204 0ms
+]]></system-out>
+  </testcase>
+</testsuite>

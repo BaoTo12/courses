@@ -1,0 +1,11 @@
+version: 0.0
+Resources:
+  - TargetFunction:
+      Type: AWS::Lambda::Function
+      Properties:
+        Name: CloudOrderServiceFunction
+        Alias: live
+        CurrentVersion: "1"
+        TargetVersion: "2"
+Hooks:
+  - BeforeAllowTraffic: CanaryValidationHookFunction

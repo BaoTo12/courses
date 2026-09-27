@@ -1,0 +1,46 @@
+package com.taskflow.web.tasks;
+
+import com.taskflow.model.TaskDetails;
+import com.taskflow.service.TaskService;
+import com.taskflow.web.AppContextListener;
+import com.taskflow.web.AppStats;
+import com.taskflow.web.CurrentUser;
+import com.taskflow.web.Flash;
+import com.taskflow.web.Params;
+import com.taskflow.web.RecentTasks;
+import com.taskflow.web.errors.NotFoundException;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * GET /tasks/view?id=N. The controller handles every error path (400, 404) BEFORE choosing the view (32.12).
+ * S43: by THROWING: ErrorHandlingFilter maps the exceptions to statuses, web.xml maps the statuses to pages (43.08).
+ * S36: the service assembles the TaskDetails (task + category + owner + comments) from the database.
+ */
+@WebServlet("/tasks/view")
+public class TaskViewServlet extends HttpServlet {
+
+  private TaskService service;
+
+  @Override
+  public void init() {
+    service = AppContextListener.taskService(getServletContext());
+  }
+
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    long id = Params.requiredId(request, "id");                       // S43: bad id → BadRequestException → 400 page
+    TaskDetails details = service.details(id, CurrentUser.get(request)) // S42: someone else's task → AccessDeniedException
+        .orElseThrow(NotFoundException::new);                            // S43: → 404 page (ErrorHandlingFilter)
+    request.setAttribute("details", details);
+    request.setAttribute("pageTitle", details.getTask().getTitle()); // header.jspf escapes it
+    RecentTasks.record(request, id);                                                          // S38: session scope
+    ((AppStats) getServletContext().getAttribute(AppStats.ATTRIBUTE)).taskViewed(id);        // S38: application scope
+    Flash.consume(request);
+    request.getRequestDispatcher("/WEB-INF/views/tasks/view.jsp").forward(request, response);
+  }
+}

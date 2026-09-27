@@ -1,0 +1,3 @@
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-02-fanout-queues\src\main\java\com\cloudarchitect\dvac02\consumer\BillingQueueProcessor.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-02-fanout-queues\src\main\java\com\cloudarchitect\dvac02\event\OrderEventPublisher.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-02-fanout-queues\src\main\java\com\cloudarchitect\dvac02\model\OrderEvent.java

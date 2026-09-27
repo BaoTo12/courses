@@ -1,0 +1,202 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 2: Asynchronous SNS Fan-Out to SQS with Partial Batch Failure Handling.
+  Demonstrating SNS message filtering, dead letter queues, visibility timeouts (V >= 6 * L),
+  and ReportBatchItemFailures SQS event source mapping with raw JSON IAM execution role.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1769 # Exactly 1 full vCPU thread allocated to Java 21 JVM
+    Runtime: java21
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        STAGE: Prod
+        LOG_LEVEL: INFO
+
+Resources:
+  # ============================================================================
+  # 1. SNS Ingress Topic (Pub/Sub Event Bus)
+  # ============================================================================
+  OrderEventsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: CloudOrderEventsTopic
+      DisplayName: "CloudOrder Order Lifecycle Events"
+
+  # ============================================================================
+  # 2. Dead Letter Queues (DLQ)
+  # ============================================================================
+  BillingDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: CloudOrderBillingDLQ
+      MessageRetentionPeriod: 1209600 # 14 days maximum retention
+
+  # ============================================================================
+  # 3. Work Queues (BillingQueue & PriorityQueue)
+  # Mechanical Sympathy: VisibilityTimeout (180s) >= 6 * Lambda Timeout (30s)
+  # ReceiveMessageWaitTimeSeconds: 20 enforces long-polling (saving API cost & latency)
+  # ============================================================================
+  BillingQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: CloudOrderBillingQueue
+      VisibilityTimeout: 180
+      ReceiveMessageWaitTimeSeconds: 20
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt BillingDLQ.Arn
+        maxReceiveCount: 3
+
+  PriorityQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: CloudOrderPriorityQueue
+      VisibilityTimeout: 180
+      ReceiveMessageWaitTimeSeconds: 20
+
+  # ============================================================================
+  # 4. SQS Queue Policies (Allowing SNS to Publish to SQS)
+  # Without this explicit resource policy, SNS delivery silently fails!
+  # ============================================================================
+  BillingQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref BillingQueue
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowSNSToSendBillingMessages
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt BillingQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref OrderEventsTopic
+
+  PriorityQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref PriorityQueue
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowSNSToSendPriorityMessages
+            Effect: Allow
+            Principal:
+              Service: sns.amazonaws.com
+            Action: sqs:SendMessage
+            Resource: !GetAtt PriorityQueue.Arn
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Ref OrderEventsTopic
+
+  # ============================================================================
+  # 5. SNS Subscriptions with Attribute Filter Policies
+  # ============================================================================
+  BillingQueueSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref OrderEventsTopic
+      Protocol: sqs
+      Endpoint: !GetAtt BillingQueue.Arn
+      RawMessageDelivery: false # Wraps message in SNS JSON envelope
+
+  PriorityQueueSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref OrderEventsTopic
+      Protocol: sqs
+      Endpoint: !GetAtt PriorityQueue.Arn
+      RawMessageDelivery: false
+      FilterPolicy:
+        priority:
+          - "HIGH"
+
+  # ============================================================================
+  # 6. Explicit Raw JSON IAM Execution Role (Bypassing managed policies)
+  # ============================================================================
+  BillingProcessorFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudOrderExplicitLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+        - PolicyName: CloudOrderExplicitSQSPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                  - sqs:ChangeMessageVisibility
+                Resource: !GetAtt BillingQueue.Arn
+
+  # ============================================================================
+  # 7. Serverless Batch Consumer Function with ReportBatchItemFailures
+  # ============================================================================
+  BillingProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.consumer.BillingQueueProcessor::handleRequest
+      Role: !GetAtt BillingProcessorFunctionRole.Arn
+      Timeout: 30
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce
+      Events:
+        BillingQueueEvent:
+          Type: SQS
+          Properties:
+            Queue: !GetAtt BillingQueue.Arn
+            BatchSize: 10
+            MaximumBatchingWindowInSeconds: 5
+            FunctionResponseTypes:
+              - ReportBatchItemFailures
+
+Outputs:
+  OrderEventsTopicArn:
+    Description: "SNS OrderEventsTopic ARN"
+    Value: !Ref OrderEventsTopic
+  BillingQueueUrl:
+    Description: "SQS BillingQueue URL"
+    Value: !Ref BillingQueue
+  BillingQueueArn:
+    Description: "SQS BillingQueue ARN"
+    Value: !GetAtt BillingQueue.Arn
+  BillingDLQUrl:
+    Description: "SQS BillingDLQ URL"
+    Value: !Ref BillingDLQ
+  PriorityQueueUrl:
+    Description: "SQS PriorityQueue URL"
+    Value: !Ref PriorityQueue
+  BillingProcessorFunctionArn:
+    Description: "BillingProcessorFunction ARN"
+    Value: !GetAtt BillingProcessorFunction.Arn

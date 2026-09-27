@@ -1,0 +1,49 @@
+@use '@styles/abstracts' as *;
+
+.board {
+  display: grid;
+  gap: space(4);
+  grid-template-columns: 1fr;
+
+  @include respond-to('md') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: space(3);
+  padding: space(3);
+  background: theme('surface-muted');
+  border-radius: $radius-lg;
+  min-height: 12rem;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: to-rem(14px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: theme('text-muted');
+}
+
+.count {
+  font-size: to-rem(12px);
+  padding: 0 space(2);
+  border-radius: $radius-full;
+  background: theme('surface');
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: space(3);
+}
+
+.empty {
+  color: theme('text-muted');
+  font-size: to-rem(14px);
+}

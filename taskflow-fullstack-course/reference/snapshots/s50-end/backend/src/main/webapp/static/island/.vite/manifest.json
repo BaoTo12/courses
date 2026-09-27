@@ -1,0 +1,30 @@
+{
+  "_island-DiS-6tfM.js": {
+    "file": "assets/island-DiS-6tfM.js",
+    "name": "island"
+  },
+  "src/island/boardIsland.tsx": {
+    "file": "assets/boardIsland-CjzBtHsN.js",
+    "name": "boardIsland",
+    "src": "src/island/boardIsland.tsx",
+    "isEntry": true,
+    "imports": [
+      "_island-DiS-6tfM.js"
+    ],
+    "css": [
+      "assets/boardIsland-CaFsEnrj.css"
+    ]
+  },
+  "src/island/commentsIsland.tsx": {
+    "file": "assets/commentsIsland-CiPBzVwi.js",
+    "name": "commentsIsland",
+    "src": "src/island/commentsIsland.tsx",
+    "isEntry": true,
+    "imports": [
+      "_island-DiS-6tfM.js"
+    ],
+    "css": [
+      "assets/commentsIsland-BqBixGfS.css"
+    ]
+  }
+}

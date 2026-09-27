@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.cloudarchitect.dvac02.security.S06AuthSecurityTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.844 s -- in com.cloudarchitect.dvac02.security.S06AuthSecurityTest

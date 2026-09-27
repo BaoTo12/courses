@@ -1,0 +1,220 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 7: AWS CodePipeline, CodeBuild, CodeDeploy Canary Hooks,
+  and Elastic Beanstalk Zero-Downtime Deployment Environment.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment tier.
+
+Globals:
+  Function:
+    Runtime: java21
+    Architectures:
+      - arm64
+    MemorySize: 512
+    Timeout: 30
+
+Resources:
+
+  # ----------------------------------------------------------------------------
+  # 1. Pipeline Artifact Storage Bucket
+  # ----------------------------------------------------------------------------
+  PipelineArtifactBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub cloudorder-pipeline-artifacts-${Environment}-${AWS::AccountId}-${AWS::Region}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        RestrictPublicBuckets: true
+
+  # ----------------------------------------------------------------------------
+  # 2. AWS CodeBuild Project
+  # ----------------------------------------------------------------------------
+  CodeBuildServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cloudorder-codebuild-role-${Environment}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codebuild.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeBuildExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/*'
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:GetBucketLocation
+                Resource:
+                  - !GetAtt PipelineArtifactBucket.Arn
+                  - !Sub '${PipelineArtifactBucket.Arn}/*'
+
+  CloudOrderBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Name: !Sub cloudorder-build-${Environment}
+      Description: Automated Java 21 compilation and verification build
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:5.0
+        EnvironmentVariables:
+          - Name: ENVIRONMENT
+            Value: !Ref Environment
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: buildspec.yml
+      TimeoutInMinutes: 20
+
+  # ----------------------------------------------------------------------------
+  # 3. AWS CodeDeploy Application & Deployment Group (Canary Traffic Shifting)
+  # ----------------------------------------------------------------------------
+  CodeDeployServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cloudorder-codedeploy-role-${Environment}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: codedeploy.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CodeDeployLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !GetAtt CanaryValidationHookFunction.Arn
+
+  CodeDeployApplication:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ApplicationName: !Sub cloudorder-deploy-${Environment}
+      ComputePlatform: Lambda
+
+  CodeDeployDeploymentGroup:
+    Type: AWS::CodeDeploy::DeploymentGroup
+    Properties:
+      ApplicationName: !Ref CodeDeployApplication
+      DeploymentGroupName: !Sub cloudorder-canary-group-${Environment}
+      ServiceRoleArn: !GetAtt CodeDeployServiceRole.Arn
+      DeploymentConfigName: CodeDeployDefault.LambdaCanary10Percent5Minutes
+      AutoRollbackConfiguration:
+        Enabled: true
+        Events:
+          - DEPLOYMENT_FAILURE
+          - DEPLOYMENT_STOP_ON_ALARM
+
+  # ----------------------------------------------------------------------------
+  # 4. CodeDeploy BeforeAllowTraffic Lifecycle Hook Lambda Function
+  # ----------------------------------------------------------------------------
+  HookFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cloudorder-hook-role-${Environment}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: HookExecutionPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
+              - Effect: Allow
+                Action:
+                  - codedeploy:PutLifecycleEventHookExecutionStatus
+                Resource: '*'
+
+  CanaryValidationHookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub cloudorder-canary-validator-${Environment}
+      Handler: com.cloudarchitect.dvac02.cicd.handler.CanaryValidationHookHandler::handleRequest
+      CodeUri: .
+      Role: !GetAtt HookFunctionRole.Arn
+
+  # ----------------------------------------------------------------------------
+  # 5. AWS Elastic Beanstalk Application & Environment
+  # ----------------------------------------------------------------------------
+  BeanstalkApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      ApplicationName: !Sub cloudorder-web-${Environment}
+      Description: CloudOrder Web Portal Application
+
+  BeanstalkEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName: !Ref BeanstalkApplication
+      EnvironmentName: !Sub cloudorder-env-${Environment}
+      SolutionStackName: 64bit Amazon Linux 2023 v4.2.1 running Corretto 21
+      OptionSettings:
+        # Immutable Zero-Downtime Deployment Strategy
+        - Namespace: aws:elasticbeanstalk:command
+          OptionName: DeploymentPolicy
+          Value: Immutable
+        # Health Check Path
+        - Namespace: aws:elasticbeanstalk:environment:process:default
+          OptionName: HealthCheckPath
+          Value: /health
+
+Outputs:
+  ArtifactBucketName:
+    Description: S3 Pipeline Artifact Bucket
+    Value: !Ref PipelineArtifactBucket
+
+  CodeBuildProjectName:
+    Description: CodeBuild Project Name
+    Value: !Ref CloudOrderBuildProject
+
+  DeploymentGroupName:
+    Description: CodeDeploy Deployment Group Name
+    Value: !Ref CodeDeployDeploymentGroup
+
+  HookFunctionArn:
+    Description: ARN of the Canary Validation Hook Lambda Function
+    Value: !GetAtt CanaryValidationHookFunction.Arn
+
+  BeanstalkEndpoint:
+    Description: Elastic Beanstalk Environment URL
+    Value: !GetAtt BeanstalkEnvironment.EndpointURL

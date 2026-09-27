@@ -1,0 +1,36 @@
+@use '@styles/abstracts' as *;
+
+// A task's comments (22.11). React-only: a CSS Module.
+.comments {
+  display: flex;
+  flex-direction: column;
+  gap: space(3);
+  margin-top: space(6);
+  padding-top: space(4);
+  border-top: 1px solid theme('border');
+}
+
+.heading {
+  margin: 0;
+  font-size: to-rem(16px);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: space(2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.comment {
+  padding: space(2) space(3);
+  background: theme('surface-muted');
+  border-radius: $radius-md;
+
+  p {
+    margin: 0 0 space(1);
+    white-space: pre-wrap; // keep the user's line breaks (still plain text)
+  }
+}

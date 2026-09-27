@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.taskflow.web.S38ScopesTest" time="5.744" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="catalina.useNaming" value="false"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Saigon"/>
+    <property name="user.country.format" value="VN"/>
+    <property name="taskflow.db.url" value="jdbc:mysql://localhost:56549/taskflow?serverTimezone=UTC"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
+    <property name="sun.java.command" value="C:\Users\Admin\AppData\Local\Temp\surefire16686141413158292613\surefirebooter-20260926222116705_3.jar C:\Users\Admin\AppData\Local\Temp\surefire16686141413158292613 2026-09-26T22-21-16_570-jvmRun1 surefire-20260926222116705_1tmp surefire_0-20260926222116705_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="S44AdvancedJspTest,S33JspFundamentalsTest,S34ElTest,S35JstlTest,S36MvcDatabaseTest,S38ScopesTest,S39ReusableViewsTest,S41AuthenticationTest,S42AuthorizationTest,S43ErrorHandlingTest"/>
+    <property name="surefire.test.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Admin"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="taskflow.db.password" value="taskflow_dev_pw"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\Admin\AppData\Local\Temp\surefire16686141413158292613\surefirebooter-20260926222116705_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.9+7-LTS-338"/>
+    <property name="user.name" value="Admin"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\Admin\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\Admin\AppData\Local\Temp\"/>
+    <property name="catalina.home" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="java.version" value="21.0.9"/>
+    <property name="user.dir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.language.format" value="vi"/>
+    <property name="taskflow.db.user" value="taskflow_app"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="catalina.base" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;;C:\ProgramData\chocolatey\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Go\bin;C:\Program Files\k6\;C:\Program Files\Calibre2\;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Users\Admin\AppData\Local\agy\bin;C:\Program Files (x86)\Go\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.14\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\Admin\AppData\Local\Programs\Python\Python313\;C:\Users\Admin\AppData\Local\Programs\Python\Launcher\;C:\Users\Admin\.local\bin;C:\Users\Admin\AppData\Local\Microsoft\WindowsApps;C:\Users\Admin\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity\bin;C:\Users\Admin\AppData\Roaming\npm;C:\Users\Admin\go\bin;C:\tools\dart-sdk\bin;C:\Users\Admin\AppData\Local\Pub\Cache\bin;C:\Tools;C:\Program Files\JetBrains\IntelliJ IDEA 2026.1.1\bin;C:\Users\Admin\AppData\Local\Programs\Ollama;C:\flutter\bin;C:\Users\Admin\go\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity IDE\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313;C:\Program Files\nodejs;C:\Program Files\Git\mingw64\bin;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.9+7-LTS-338"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="mostViewedIsSharedByEveryone" classname="com.taskflow.web.S38ScopesTest" time="0.902">
+    <system-out><![CDATA[22:21:54.934 INFO  [e35c5528810f5eaa] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 485ms
+22:21:55.191 INFO  [90571b87f6fd0da6] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 256ms
+22:21:55.198 INFO  [70e77f68931ad64b] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 0ms
+22:21:55.440 INFO  [e79392971aa04bf7] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 240ms
+22:21:55.803 INFO  [6bd669760bac3f47] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=5 200 361ms
+22:21:55.811 INFO  [49b469454c097253] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=5 200 5ms
+22:21:55.818 INFO  [cb8470a8d37524c6] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=5 200 5ms
+22:21:56.093 INFO  [9b131c119f826bb4] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/stats 200 272ms
+]]></system-out>
+    <system-err><![CDATA[thg 9 26, 2026 10:21:52 CH org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-auto-5"]
+thg 9 26, 2026 10:21:52 CH org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Tomcat]
+thg 9 26, 2026 10:21:52 CH org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.93]
+thg 9 26, 2026 10:21:52 CH org.apache.catalina.startup.ContextConfig getDefaultWebXmlFragment
+INFO: No global web.xml found
+thg 9 26, 2026 10:21:53 CH org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+thg 9 26, 2026 10:21:54 CH org.apache.catalina.core.ApplicationContext log
+INFO: TaskFlow started: the database is ready
+thg 9 26, 2026 10:21:54 CH org.apache.catalina.core.ApplicationContext log
+INFO: com.taskflow.web.HelloServlet: init(): HelloServlet created once, at deployment
+thg 9 26, 2026 10:21:54 CH org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-auto-5-56690"]
+]]></system-err>
+  </testcase>
+  <testcase name="theCategoryCacheIsRefreshedWhenACategoryChanges" classname="com.taskflow.web.S38ScopesTest" time="1.768">
+    <system-out><![CDATA[22:21:56.375 INFO  [2f613909b427466d] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/new 200 279ms
+22:21:56.378 INFO  [18abb34d92c5b90a] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/new 200 0ms
+22:21:56.392 INFO  [401e614361e75040] c.t.w.f.RequestLoggingFilter - POST /taskflow/categories/save 303 10ms
+22:21:56.394 INFO  [1409af893b483353] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/new 200 0ms
+22:21:57.861 INFO  [ce64bfc2d1de1123] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 1466ms
+]]></system-out>
+  </testcase>
+  <testcase name="recentlyViewedIsPerSession" classname="com.taskflow.web.S38ScopesTest" time="0.335">
+    <system-out><![CDATA[22:21:57.889 INFO  [ead651fbf300fc9] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=1 200 24ms
+22:21:57.900 INFO  [af1a49a34eec38a3] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=3 200 8ms
+22:21:57.912 INFO  [aad1427e0808f257] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/view?id=1 200 9ms
+22:21:57.932 INFO  [a96edadce491a6df] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 17ms
+22:21:57.936 INFO  [41e5b38ae69bd460] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 0ms
+22:21:58.187 INFO  [5096c59e21824a68] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 248ms
+22:21:58.196 INFO  [f514deee1711f9bb] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 8ms
+]]></system-out>
+  </testcase>
+  <testcase name="applicationCountersSeeEveryUser" classname="com.taskflow.web.S38ScopesTest" time="0.28">
+    <system-out><![CDATA[22:21:58.205 INFO  [d7eb5ddd508ac0ec] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/stats 200 6ms
+22:21:58.210 INFO  [3efdca48ab6b683b] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 0ms
+22:21:58.456 INFO  [de178b2f17c63d17] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 245ms
+22:21:58.468 INFO  [93351a22ce681cd4] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 10ms
+22:21:58.477 INFO  [52dcab055705de99] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/stats 200 7ms
+]]></system-out>
+  </testcase>
+</testsuite>

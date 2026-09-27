@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  TaskFlow Admin + JSON API: ONE WAR for Tomcat 9 (Servlet 4.0 / JSP 2.3 / EL 3.0, javax.*). PROVIDED plumbing (28.05).
+  The rule for every dependency below: does Tomcat already have it?  yes → scope "provided" · no → bundle it (compile).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.taskflow</groupId>
+  <artifactId>taskflow-backend</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <properties>
+    <!-- Compile FOR Java 17 whatever JDK runs Maven (checks the API too, unlike -source/-target). -->
+    <maven.compiler.release>17</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <junit.version>5.10.2</junit.version>
+  </properties>
+
+  <dependencies>
+    <!-- ── Tomcat 9 ships these: compile against them, never bundle them ("provided") ─────────────── -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>javax.servlet.jsp-api</artifactId>
+      <version>2.3.3</version>
+      <scope>provided</scope>
+    </dependency>
+    <!--
+      No javax.el-api here (S32): our code never imports javax.el, and that API jar's ExpressionFactory looks for
+      GlassFish's implementation (com.sun.el…), which breaks EL in the embedded Tomcat tests. Tomcat ships its own.
+    -->
+
+    <!-- ── Tomcat 9 does NOT ship JSTL: bundle it in WEB-INF/lib (28.05) ──────────────────────────── -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!-- ── Application libraries (bundled) ────────────────────────────────────────────────────────── -->
+    <dependency> <!-- MySQL JDBC driver (S36) -->
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>8.4.0</version>
+    </dependency>
+    <dependency> <!-- connection pool behind DataSourceProvider (S36) -->
+      <groupId>com.zaxxer</groupId>
+      <artifactId>HikariCP</artifactId>
+      <version>5.1.0</version>
+    </dependency>
+    <dependency> <!-- password hashing behind PasswordHasher (S41); also verifies the seed data (SeedDataTest) -->
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+    </dependency>
+    <dependency> <!-- JSON for the API servlets (Part 3) -->
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.17.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.17.2</version>
+    </dependency>
+    <dependency> <!-- logging: SLF4J API + Logback (S43) -->
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.5.6</version>
+    </dependency>
+    <!--
+      Pinned on purpose (28.05): HikariCP 5.1.0 brings slf4j-api 1.7.36 and Logback 1.5 brings 2.0.x, both at depth 2.
+      Maven's rule is "nearest wins, then FIRST DECLARED", so HikariCP's old 1.7.36 would win, and SLF4J 1.7 can't
+      find Logback 1.5 ("No SLF4J providers were found"): all logs silently vanish. A direct dependency is nearest.
+    -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.13</version>
+    </dependency>
+
+    <!-- ── Tests only ─────────────────────────────────────────────────────────────────────────────── -->
+    <!-- A REAL Tomcat 9, embedded in the tests: servlets are tested over HTTP, as deployed (TomcatTest, S30). -->
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>9.0.93</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency> <!-- Jasper: the JSP engine (S32+), so the embedded Tomcat can translate and run our JSPs -->
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <version>9.0.93</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- The WAR is named taskflow.war → Tomcat deploys it at the context path /taskflow (28.10). -->
+    <finalName>taskflow</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.4.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>

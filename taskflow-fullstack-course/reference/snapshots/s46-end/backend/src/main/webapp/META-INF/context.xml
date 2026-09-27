@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- PROVIDED (S36): per-app Tomcat settings. Do not follow Class-Path entries in jar manifests (the JAXB jar
+     that Hibernate uses lists jars that do not exist, which only produces warnings at startup). -->
+<Context>
+  <JarScanner scanManifest="false"/>
+  <!-- S41 (41.12): SameSite=Lax on every cookie Tomcat writes (JSESSIONID, tf_theme): a second layer against CSRF (37.14). -->
+  <CookieProcessor sameSiteCookies="lax"/>
+</Context>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The deployment descriptor (28.04). Servlet 4.0 schema = Tomcat 9. Everything under WEB-INF/ is private:
+  the container never serves it to a browser. Servlets, filters and listeners are added from S30 on.
+-->
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+
+  <display-name>TaskFlow Admin</display-name>
+
+  <!-- S30 (30.13): an APPLICATION-wide setting, read with getServletContext().getInitParameter("greeting"). -->
+  <context-param>
+    <param-name>greeting</param-name>
+    <param-value>Xin chào từ TaskFlow!</param-value>
+  </context-param>
+
+  <!-- S40 (40.15): start in maintenance mode? Switchable at runtime through /debug/maintenance. -->
+  <context-param>
+    <param-name>taskflow.maintenance</param-name>
+    <param-value>false</param-value>
+  </context-param>
+
+  <!--
+    S40 (40.07): the filters, declared HERE and not with @WebFilter, because the ORDER matters and only web.xml
+    defines it: the <filter-mapping> elements run in the order they appear. Why this order: 40.14.
+      1. encoding      before anything reads a parameter (40.19)
+      2. logging       wraps everything else, so it measures and sees the final status
+      3. headers       on every response, including the ones later filters answer themselves (403, 503)
+      4. maintenance   before any application work
+      5. (S41) authentication · 6. CSRF: every non-GET request needs the token
+  -->
+  <filter>
+    <filter-name>encoding</filter-name>
+    <filter-class>com.taskflow.web.filters.CharacterEncodingFilter</filter-class>
+    <init-param><param-name>encoding</param-name><param-value>UTF-8</param-value></init-param>
+  </filter>
+  <filter>
+    <filter-name>logging</filter-name>
+    <filter-class>com.taskflow.web.filters.RequestLoggingFilter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>securityHeaders</filter-name>
+    <filter-class>com.taskflow.web.filters.SecurityHeadersFilter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>maintenance</filter-name>
+    <filter-class>com.taskflow.web.filters.MaintenanceModeFilter</filter-class>
+  </filter>
+  <filter>
+    <filter-name>csrf</filter-name>
+    <filter-class>com.taskflow.web.filters.CsrfFilter</filter-class>
+  </filter>
+
+  <filter-mapping><filter-name>encoding</filter-name><url-pattern>/*</url-pattern></filter-mapping>
+  <filter-mapping><filter-name>logging</filter-name><url-pattern>/*</url-pattern></filter-mapping>
+  <filter-mapping>
+    <filter-name>securityHeaders</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+    <dispatcher>ERROR</dispatcher>     <!-- error pages (S43) get the headers too (40.08) -->
+  </filter-mapping>
+  <filter-mapping><filter-name>maintenance</filter-name><url-pattern>/*</url-pattern></filter-mapping>
+  <filter-mapping><filter-name>csrf</filter-name><url-pattern>/*</url-pattern></filter-mapping>
+
+  <!-- Served for "/" (the context root). -->
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+
+  <!--
+    S33 (33.10): settings for EVERY JSP and JSP fragment. Without <page-encoding>, an included .jspf is read as
+    ISO-8859-1 (the JSP default for files that don't declare an encoding): "·" became "Â·" (33.19).
+  -->
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <url-pattern>*.jspf</url-pattern>
+      <page-encoding>UTF-8</page-encoding>
+      <trim-directive-whitespaces>true</trim-directive-whitespaces>
+      <!-- S36 (33.14): every view is EL + JSTL only (35.08). From now on, Java in a JSP is a TRANSLATION ERROR. -->
+      <scripting-invalid>true</scripting-invalid>
+    </jsp-property-group>
+  </jsp-config>
+
+  <!-- Sessions (S38): 30 minutes, cookie HttpOnly, only over cookies (never ;jsessionid= in URLs). -->
+  <session-config>
+    <session-timeout>30</session-timeout>
+    <cookie-config>
+      <http-only>true</http-only>
+    </cookie-config>
+    <tracking-mode>COOKIE</tracking-mode>
+  </session-config>
+</web-app>

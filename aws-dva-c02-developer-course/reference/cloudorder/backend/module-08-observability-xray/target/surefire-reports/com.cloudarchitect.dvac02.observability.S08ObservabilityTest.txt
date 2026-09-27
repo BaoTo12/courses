@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.cloudarchitect.dvac02.observability.S08ObservabilityTest
+-------------------------------------------------------------------------------
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.329 s -- in com.cloudarchitect.dvac02.observability.S08ObservabilityTest

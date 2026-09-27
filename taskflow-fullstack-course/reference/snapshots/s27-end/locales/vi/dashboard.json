@@ -1,0 +1,15 @@
+{
+  "title": "Tổng quan",
+  "completion": {
+    "heading": "Tiến độ",
+    "summary_other": "Đã xong {{rate}}% trong {{count}} công việc"
+  },
+  "byStatus": "Theo trạng thái",
+  "byPriority": "Theo độ ưu tiên",
+  "overdue": {
+    "heading": "Quá hạn",
+    "none": "Không có việc quá hạn. 🎉",
+    "summary_other": "Bạn có {{count}} công việc quá hạn",
+    "due": "hạn {{when}}"
+  }
+}

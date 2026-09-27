@@ -1,0 +1,2 @@
+com\cloudarchitect\dvac02\cicd\handler\CanaryValidationHookHandler.class
+com\cloudarchitect\dvac02\cicd\health\BeanstalkHealthCheckController.class

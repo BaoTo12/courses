@@ -1,0 +1,8 @@
+com\cloudarchitect\dvac02\security\handler\CognitoJwtAuthorizerHandler.class
+com\cloudarchitect\dvac02\security\service\SecretsManagerCacheService.class
+com\cloudarchitect\dvac02\security\service\SecretsManagerCacheService$CachedSecret.class
+com\cloudarchitect\dvac02\security\model\EncryptedPayload.class
+com\cloudarchitect\dvac02\security\model\AuthPolicyResponse.class
+com\cloudarchitect\dvac02\security\service\KmsEnvelopeEncryptionService.class
+com\cloudarchitect\dvac02\security\model\AuthPolicyResponse$Statement.class
+com\cloudarchitect\dvac02\security\model\AuthPolicyResponse$PolicyDocument.class

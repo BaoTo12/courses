@@ -1,0 +1,5 @@
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-06-auth-security\src\main\java\com\cloudarchitect\dvac02\security\handler\CognitoJwtAuthorizerHandler.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-06-auth-security\src\main\java\com\cloudarchitect\dvac02\security\model\AuthPolicyResponse.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-06-auth-security\src\main\java\com\cloudarchitect\dvac02\security\model\EncryptedPayload.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-06-auth-security\src\main\java\com\cloudarchitect\dvac02\security\service\KmsEnvelopeEncryptionService.java
+C:\Users\Admin\Desktop\courses\aws-dva-c02-developer-course\reference\cloudorder\backend\module-06-auth-security\src\main\java\com\cloudarchitect\dvac02\security\service\SecretsManagerCacheService.java

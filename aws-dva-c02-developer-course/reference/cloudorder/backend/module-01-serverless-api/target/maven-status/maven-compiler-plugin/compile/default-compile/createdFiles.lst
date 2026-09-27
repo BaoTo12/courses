@@ -1,0 +1,4 @@
+com\cloudarchitect\dvac02\api\OrderApiHandler.class
+com\cloudarchitect\dvac02\model\ErrorResponse.class
+com\cloudarchitect\dvac02\model\OrderResponse.class
+com\cloudarchitect\dvac02\model\OrderRequest.class

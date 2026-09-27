@@ -1,0 +1,61 @@
+@use '@styles/abstracts' as *;
+
+// The dashboard's widget grid (21.17). React-only layout: a CSS Module.
+.grid {
+  display: grid;
+  gap: space(4);
+  grid-template-columns: 1fr;
+
+  @include respond-to('md') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: space(3);
+  padding: space(4);
+  background: theme('surface');
+  border: 1px solid theme('border');
+  border-radius: $radius-lg;
+}
+
+.heading {
+  margin: 0;
+  font-size: to-rem(14px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: theme('text-muted');
+}
+
+.counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: space(2);
+  margin: 0;
+
+  dd {
+    margin: 0;
+    font-size: to-rem(24px);
+    font-weight: 700;
+  }
+}
+
+.badge {
+  margin-left: space(1);
+  padding: 0 space(2);
+  border-radius: $radius-full;
+  background: theme('danger');
+  color: #fff;
+  font-size: to-rem(12px);
+}
+
+.overdue {
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

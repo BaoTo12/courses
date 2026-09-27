@@ -1,0 +1,375 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "alice",
+      "password": "alice123",
+      "displayName": "Alice Nguyen",
+      "role": "USER",
+      "locale": "en"
+    },
+    {
+      "id": 2,
+      "username": "bob",
+      "password": "bob123",
+      "displayName": "Bob Tran",
+      "role": "USER",
+      "locale": "vi"
+    },
+    {
+      "id": 3,
+      "username": "admin",
+      "password": "admin123",
+      "displayName": "Admin",
+      "role": "ADMIN",
+      "locale": "en"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Work",
+      "color": "#2563eb"
+    },
+    {
+      "id": 2,
+      "name": "Engineering",
+      "color": "#7c3aed"
+    },
+    {
+      "id": 3,
+      "name": "Team",
+      "color": "#059669"
+    },
+    {
+      "id": 4,
+      "name": "Personal",
+      "color": "#d97706"
+    }
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "title": "Write quarterly report",
+      "description": "Summarise Q3 results for the steering meeting.",
+      "status": "IN_PROGRESS",
+      "priority": "HIGH",
+      "dueDate": "2026-10-03",
+      "categoryId": 1,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Fix login redirect bug",
+      "description": "Users land on 404 after session timeout.",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "dueDate": "2026-09-20",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Plan team offsite",
+      "description": "Shortlist three venues.",
+      "status": "DONE",
+      "priority": "LOW",
+      "dueDate": null,
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Review <img src=x onerror=\"alert(1)\"> onboarding doc",
+      "description": "Deliberately malicious title: React renders it as text.",
+      "status": "TODO",
+      "priority": "LOW",
+      "dueDate": "2026-10-10",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Prepare sprint demo",
+      "description": "Record a 3-minute walkthrough.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-09-29",
+      "categoryId": 1,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 6,
+      "title": "Update dependency versions",
+      "description": "Run npm outdated and review changelogs.",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-06",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 7,
+      "title": "Write onboarding checklist",
+      "description": "For the two new joiners in October.",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-01",
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 8,
+      "title": "Book dentist appointment",
+      "description": "Before the end of the month.",
+      "status": "DONE",
+      "priority": "LOW",
+      "dueDate": "2026-09-28",
+      "categoryId": 4,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 9,
+      "title": "Renew SSL certificate",
+      "description": "Staging cert expires mid-October.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-10-12",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 10,
+      "title": "Draft Q4 roadmap",
+      "description": "Collect input from product and support.",
+      "status": "IN_PROGRESS",
+      "priority": "HIGH",
+      "dueDate": "2026-10-15",
+      "categoryId": 1,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 11,
+      "title": "Clean up feature flags",
+      "description": "Remove flags older than two releases.",
+      "status": "TODO",
+      "priority": "LOW",
+      "dueDate": null,
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 12,
+      "title": "Order team T-shirts",
+      "description": "Sizes survey is in the shared drive.",
+      "status": "DONE",
+      "priority": "LOW",
+      "dueDate": "2026-09-15",
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 13,
+      "title": "Migrate CI to Node 24",
+      "description": "Node 20 is end-of-life.",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-08",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 14,
+      "title": "Write blog post on caching",
+      "description": "Hashed assets vs index.html.",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-20",
+      "categoryId": 1,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 15,
+      "title": "Pay electricity bill",
+      "description": "Autopay failed last month.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-09-30",
+      "categoryId": 4,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 16,
+      "title": "Interview frontend candidate",
+      "description": "Prepare the React exercise.",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-02",
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 17,
+      "title": "Archive old Jira epics",
+      "description": "Anything closed before 2025.",
+      "status": "DONE",
+      "priority": "LOW",
+      "dueDate": null,
+      "categoryId": 1,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 18,
+      "title": "Load-test the search endpoint",
+      "description": "Target: p95 below 300 ms.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-10-18",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 19,
+      "title": "Book flights for conference",
+      "description": "Compare prices on Tuesday.",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-05",
+      "categoryId": 4,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 20,
+      "title": "Update the style guide",
+      "description": "Add the new badge colours.",
+      "status": "TODO",
+      "priority": "LOW",
+      "dueDate": "2026-10-25",
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 21,
+      "title": "Fix flaky date test",
+      "description": "Fails before 07:00 in Vietnam (UTC offset).",
+      "status": "DONE",
+      "priority": "MEDIUM",
+      "dueDate": "2026-09-18",
+      "categoryId": 2,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 22,
+      "title": "Prepare 1:1 notes",
+      "description": "Topics: goals, blockers, training.",
+      "status": "TODO",
+      "priority": "MEDIUM",
+      "dueDate": "2026-09-30",
+      "categoryId": 3,
+      "ownerId": 1,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 23,
+      "title": "Bob: private salary review",
+      "description": "Only Bob (and admins) may see this task.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-10-09",
+      "categoryId": 1,
+      "ownerId": 2,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 24,
+      "title": "Bob: renew passport",
+      "description": "Appointment on Friday.",
+      "status": "IN_PROGRESS",
+      "priority": "MEDIUM",
+      "dueDate": "2026-10-04",
+      "categoryId": 4,
+      "ownerId": 2,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    },
+    {
+      "id": 25,
+      "title": "Bob: refactor payment module",
+      "description": "Split the 900-line service.",
+      "status": "TODO",
+      "priority": "HIGH",
+      "dueDate": "2026-10-30",
+      "categoryId": 2,
+      "ownerId": 2,
+      "createdAt": "2026-09-01T08:00:00Z",
+      "updatedAt": "2026-09-01T08:00:00Z"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "taskId": 1,
+      "authorId": 1,
+      "body": "Numbers from finance arrive on Monday.",
+      "createdAt": "2026-09-02T09:00:00Z"
+    },
+    {
+      "id": 2,
+      "taskId": 1,
+      "authorId": 3,
+      "body": "Please add the churn chart.",
+      "createdAt": "2026-09-03T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "taskId": 2,
+      "authorId": 1,
+      "body": "Reproduced with an expired session cookie.",
+      "createdAt": "2026-09-04T14:15:00Z"
+    }
+  ]
+}

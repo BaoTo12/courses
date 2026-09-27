@@ -1,0 +1,3 @@
+com\cloudarchitect\dvac02\consumer\BillingQueueProcessor.class
+com\cloudarchitect\dvac02\event\OrderEventPublisher.class
+com\cloudarchitect\dvac02\model\OrderEvent.class

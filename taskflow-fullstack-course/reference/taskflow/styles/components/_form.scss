@@ -1,0 +1,93 @@
+@use '../abstracts' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: space(4);
+  max-width: 560px;
+
+  &__actions {
+    display: flex;
+    gap: space(2);
+    margin-top: space(2);
+
+    .btn + .btn {
+      margin-left: 0;
+    }
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: space(1);
+
+  &__label {
+    font-size: to-rem(14px);
+    font-weight: $font-weight-medium;
+  }
+
+  &__input {
+    width: 100%;
+    padding: space(2) space(3);
+    font-size: to-rem(14px);
+    line-height: 1.5;
+    color: theme('text');
+    background: theme('surface');
+    border: 1px solid theme('border');
+    border-radius: $radius-md;
+    transition:
+      border-color $transition-fast,
+      box-shadow $transition-fast;
+
+    &::placeholder {
+      color: theme('text-muted');
+    }
+
+    &:focus {
+      outline: none;
+      border-color: theme('primary');
+      box-shadow: 0 0 0 3px theme('focus-ring');
+    }
+
+    &:disabled {
+      background: theme('surface-muted');
+      cursor: not-allowed;
+    }
+
+    &[aria-invalid='true'] {
+      border-color: theme('danger');
+    }
+  }
+
+  @at-root textarea#{&}__input {
+    resize: vertical;
+    min-height: 5rem;
+  }
+
+  &__help {
+    font-size: to-rem(12px);
+    color: theme('text-muted');
+  }
+
+  &__error {
+    font-size: to-rem(12px);
+    font-weight: $font-weight-medium;
+    color: theme('danger');
+  }
+
+  &--error &__input {
+    border-color: theme('danger');
+  }
+
+  // Label, control and buttons on one line (the list's "Sort by" control, S21).
+  &--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: space(2);
+  }
+
+  &--inline &__input {
+    width: auto;
+  }
+}

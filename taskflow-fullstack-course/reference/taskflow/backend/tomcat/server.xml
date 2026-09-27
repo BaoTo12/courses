@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  S43 (43.10) · PROVIDED. Tomcat 9's server.xml for TaskFlow, mounted by docker-compose.yml over the image's own
+  (/usr/local/tomcat/conf/server.xml). The default file, trimmed, with ONE change that matters for security:
+  the ErrorReportValve. It renders the error page for anything the web app doesn't handle (another context, a
+  failing error page, a request Tomcat rejects before any web app runs). By default it prints the exception,
+  its stack trace and "Apache Tomcat/9.0.x". Here: only the status.
+-->
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
+
+  <Service name="Catalina">
+    <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443"/>
+    <!-- S50 (50.07): HTTPS. Mount the keystore from scripts/make-dev-keystore.* at conf/dev-keystore.p12 and uncomment.
+    <Connector port="8443" protocol="org.apache.coyote.http11.Http11NioProtocol" SSLEnabled="true" scheme="https" secure="true">
+      <SSLHostConfig protocols="TLSv1.2+TLSv1.3">
+        <Certificate certificateKeystoreFile="conf/dev-keystore.p12" certificateKeystorePassword="changeit"
+                     certificateKeyAlias="taskflow" type="RSA"/>
+      </SSLHostConfig>
+    </Connector>
+    -->
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost" appBase="webapps" unpackWARs="true" autoDeploy="true">
+        <!-- 🛡 no stack traces, no exception messages, no server version in Tomcat's own error pages -->
+        <Valve className="org.apache.catalina.valves.ErrorReportValve" showReport="false" showServerInfo="false"/>
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log" suffix=".txt" pattern="%h %l %u %t &quot;%r&quot; %s %b"/>
+      </Host>
+    </Engine>
+  </Service>
+</Server>

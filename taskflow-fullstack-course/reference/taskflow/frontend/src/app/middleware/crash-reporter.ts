@@ -1,0 +1,38 @@
+import { isAction } from 'redux';
+import type { Middleware } from 'redux';
+import { redact } from './redact';
+
+export interface CrashReport {
+  error: unknown;
+  actionType: string;
+  action: unknown;
+}
+
+/**
+ * If a reducer (or a later middleware) throws while handling an action, report it with the action
+ * that caused it, then RE-THROW: reporting must not hide the failure (13.14's lesson).
+ * Register it FIRST so it wraps everything else (16.14).
+ */
+export function createCrashReporter(report: (crash: CrashReport) => void): Middleware {
+  return () => (next) => (action) => {
+    try {
+      return next(action);
+    } catch (error) {
+      report({
+        error,
+        actionType: isAction(action) ? action.type : typeof action,
+        action: redact(action),
+      });
+      throw error;
+    }
+  };
+}
+
+/**
+ * S27: render errors caught by <ErrorBoundary>. Only the error's name/message and React's component stack:
+ * no props, no state, no user data (26.09). Production would POST this to a crash endpoint (S46).
+ */
+export function reportRenderError(error: unknown, componentStack: string | null | undefined): void {
+  const summary = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+  console.error('[render crash]', summary, componentStack ?? '');
+}

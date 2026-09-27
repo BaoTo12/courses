@@ -1,0 +1,13 @@
+@use '@styles/abstracts' as *;
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: space(2);
+  margin-bottom: space(4);
+
+  // The design system's `.btn + .btn` margin is for inline buttons; a flex row uses gap.
+  :global(.btn) + :global(.btn) {
+    margin-left: 0;
+  }
+}

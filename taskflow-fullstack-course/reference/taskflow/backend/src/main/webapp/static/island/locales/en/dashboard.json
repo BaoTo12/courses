@@ -1,0 +1,17 @@
+{
+  "title": "Dashboard",
+  "completion": {
+    "heading": "Completion",
+    "summary_one": "{{rate}}% of {{count}} task done",
+    "summary_other": "{{rate}}% of {{count}} tasks done"
+  },
+  "byStatus": "By status",
+  "byPriority": "By priority",
+  "overdue": {
+    "heading": "Overdue",
+    "none": "Nothing overdue. 🎉",
+    "summary_one": "You have {{count}} overdue task",
+    "summary_other": "You have {{count}} overdue tasks",
+    "due": "due {{when}}"
+  }
+}

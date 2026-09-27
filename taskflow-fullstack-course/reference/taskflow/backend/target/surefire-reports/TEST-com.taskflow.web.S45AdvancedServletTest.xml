@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.taskflow.web.S45AdvancedServletTest" time="24.252" tests="5" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="catalina.useNaming" value="false"/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Asia/Saigon"/>
+    <property name="user.country.format" value="VN"/>
+    <property name="taskflow.db.url" value="jdbc:mysql://localhost:61159/taskflow?serverTimezone=UTC"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
+    <property name="sun.java.command" value="C:\Users\Admin\AppData\Local\Temp\surefire3886866302016869161\surefirebooter-20260926224001357_3.jar C:\Users\Admin\AppData\Local\Temp\surefire3886866302016869161 2026-09-26T22-40-01_229-jvmRun1 surefire-20260926224001357_1tmp surefire_0-20260926224001357_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="test" value="S45AdvancedServletTest"/>
+    <property name="surefire.test.class.path" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\test-classes;C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\classes;C:\Users\Admin\.m2\repository\javax\servlet\javax.servlet-api\4.0.1\javax.servlet-api-4.0.1.jar;C:\Users\Admin\.m2\repository\javax\servlet\jsp\javax.servlet.jsp-api\2.3.3\javax.servlet.jsp-api-2.3.3.jar;C:\Users\Admin\.m2\repository\javax\servlet\jstl\1.2\jstl-1.2.jar;C:\Users\Admin\.m2\repository\com\mysql\mysql-connector-j\8.4.0\mysql-connector-j-8.4.0.jar;C:\Users\Admin\.m2\repository\com\google\protobuf\protobuf-java\3.25.1\protobuf-java-3.25.1.jar;C:\Users\Admin\.m2\repository\com\zaxxer\HikariCP\5.1.0\HikariCP-5.1.0.jar;C:\Users\Admin\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.17.2\jackson-databind-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.17.2\jackson-annotations-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.17.2\jackson-core-2.17.2.jar;C:\Users\Admin\.m2\repository\com\fasterxml\jackson\datatype\jackson-datatype-jsr310\2.17.2\jackson-datatype-jsr310-2.17.2.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-classic\1.5.6\logback-classic-1.5.6.jar;C:\Users\Admin\.m2\repository\ch\qos\logback\logback-core\1.5.6\logback-core-1.5.6.jar;C:\Users\Admin\.m2\repository\org\slf4j\slf4j-api\2.0.13\slf4j-api-2.0.13.jar;C:\Users\Admin\.m2\repository\org\hibernate\hibernate-core\5.6.15.Final\hibernate-core-5.6.15.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\Admin\.m2\repository\javax\persistence\javax.persistence-api\2.2\javax.persistence-api-2.2.jar;C:\Users\Admin\.m2\repository\net\bytebuddy\byte-buddy\1.12.18\byte-buddy-1.12.18.jar;C:\Users\Admin\.m2\repository\antlr\antlr\2.7.7\antlr-2.7.7.jar;C:\Users\Admin\.m2\repository\org\jboss\spec\javax\transaction\jboss-transaction-api_1.2_spec\1.1.1.Final\jboss-transaction-api_1.2_spec-1.1.1.Final.jar;C:\Users\Admin\.m2\repository\org\jboss\jandex\2.4.2.Final\jandex-2.4.2.Final.jar;C:\Users\Admin\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\Admin\.m2\repository\javax\activation\javax.activation-api\1.2.0\javax.activation-api-1.2.0.jar;C:\Users\Admin\.m2\repository\org\hibernate\common\hibernate-commons-annotations\5.1.2.Final\hibernate-commons-annotations-5.1.2.Final.jar;C:\Users\Admin\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\jaxb-runtime\2.3.1\jaxb-runtime-2.3.1.jar;C:\Users\Admin\.m2\repository\org\glassfish\jaxb\txw2\2.3.1\txw2-2.3.1.jar;C:\Users\Admin\.m2\repository\com\sun\istack\istack-commons-runtime\3.0.7\istack-commons-runtime-3.0.7.jar;C:\Users\Admin\.m2\repository\org\jvnet\staxex\stax-ex\1.8\stax-ex-1.8.jar;C:\Users\Admin\.m2\repository\com\sun\xml\fastinfoset\FastInfoset\1.2.15\FastInfoset-1.2.15.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-core\9.0.93\tomcat-embed-core-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\tomcat-annotations-api\9.0.93\tomcat-annotations-api-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-jasper\9.0.93\tomcat-embed-jasper-9.0.93.jar;C:\Users\Admin\.m2\repository\org\apache\tomcat\embed\tomcat-embed-el\9.0.93\tomcat-embed-el-9.0.93.jar;C:\Users\Admin\.m2\repository\org\eclipse\jdt\ecj\3.26.0\ecj-3.26.0.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-mysql\2.0.5\testcontainers-mysql-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-jdbc\2.0.5\testcontainers-jdbc-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers-database-commons\2.0.5\testcontainers-database-commons-2.0.5.jar;C:\Users\Admin\.m2\repository\org\testcontainers\testcontainers\2.0.5\testcontainers-2.0.5.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-compress\1.28.0\commons-compress-1.28.0.jar;C:\Users\Admin\.m2\repository\commons-codec\commons-codec\1.19.0\commons-codec-1.19.0.jar;C:\Users\Admin\.m2\repository\commons-io\commons-io\2.20.0\commons-io-2.20.0.jar;C:\Users\Admin\.m2\repository\org\apache\commons\commons-lang3\3.18.0\commons-lang3-3.18.0.jar;C:\Users\Admin\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\Admin\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-api\3.7.1\docker-java-api-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.7.1\docker-java-transport-zerodep-3.7.1.jar;C:\Users\Admin\.m2\repository\com\github\docker-java\docker-java-transport\3.7.1\docker-java-transport-3.7.1.jar;C:\Users\Admin\.m2\repository\net\java\dev\jna\jna\5.18.1\jna-5.18.1.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\Admin\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\Admin\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\Admin\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\Admin"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2025-10-21"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="taskflow.db.password" value="taskflow_dev_pw"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\Admin\AppData\Local\Temp\surefire3886866302016869161\surefirebooter-20260926224001357_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.9+7-LTS-338"/>
+    <property name="user.name" value="Admin"/>
+    <property name="stdout.encoding" value="UTF-8"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\Admin\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\Admin\AppData\Local\Temp\"/>
+    <property name="catalina.home" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="java.version" value="21.0.9"/>
+    <property name="user.dir" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.language.format" value="vi"/>
+    <property name="taskflow.db.user" value="taskflow_app"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="catalina.base" value="C:\Users\Admin\Desktop\courses\taskflow-fullstack-course\reference\taskflow\backend\target\tomcat"/>
+    <property name="native.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;;C:\ProgramData\chocolatey\bin;C:\Program Files\Amazon\AWSCLIV2\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Go\bin;C:\Program Files\k6\;C:\Program Files\Calibre2\;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.16\bin;C:\Users\Admin\AppData\Local\agy\bin;C:\Program Files (x86)\Go\bin;C:\ProgramData\chocolatey\lib\maven\apache-maven-3.9.14\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\Admin\AppData\Local\Programs\Python\Python313\;C:\Users\Admin\AppData\Local\Programs\Python\Launcher\;C:\Users\Admin\.local\bin;C:\Users\Admin\AppData\Local\Microsoft\WindowsApps;C:\Users\Admin\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity\bin;C:\Users\Admin\AppData\Roaming\npm;C:\Users\Admin\go\bin;C:\tools\dart-sdk\bin;C:\Users\Admin\AppData\Local\Pub\Cache\bin;C:\Tools;C:\Program Files\JetBrains\IntelliJ IDEA 2026.1.1\bin;C:\Users\Admin\AppData\Local\Programs\Ollama;C:\flutter\bin;C:\Users\Admin\go\bin;C:\Users\Admin\AppData\Local\Programs\Antigravity IDE\bin;C:\Users\Admin\AppData\Local\Programs\Python\Python313;C:\Program Files\nodejs;C:\Program Files\Git\mingw64\bin;;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="UTF-8"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.9+7-LTS-338"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="theCsvExportRunsAsyncAndIsSafeForSpreadsheets" classname="com.taskflow.web.S45AdvancedServletTest" time="0.707">
+    <system-out><![CDATA[22:40:19.359 INFO  [9a361b2fc4c5e743] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 1394ms
+22:40:19.676 INFO  [8516a80e636773a4] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 263ms
+22:40:20.275 INFO  [22bf200800bf208d] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/new 200 584ms
+22:40:20.334 INFO  [9fff8de6a97541b7] c.t.w.f.RequestLoggingFilter - POST /taskflow/tasks/new 303 46ms
+22:40:20.347 INFO  [6a7f10b19e55d500] c.t.w.f.RequestLoggingFilter - POST /taskflow/tasks/new 303 9ms
+22:40:20.352 INFO  [f2d02f2066568c63] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks/export.csv 200 2ms
+]]></system-out>
+    <system-err><![CDATA[thg 9 26, 2026 10:40:13 CH org.apache.coyote.AbstractProtocol init
+INFO: Initializing ProtocolHandler ["http-nio-auto-1"]
+thg 9 26, 2026 10:40:13 CH org.apache.catalina.core.StandardService startInternal
+INFO: Starting service [Tomcat]
+thg 9 26, 2026 10:40:13 CH org.apache.catalina.core.StandardEngine startInternal
+INFO: Starting Servlet engine: [Apache Tomcat/9.0.93]
+thg 9 26, 2026 10:40:13 CH org.apache.catalina.startup.ContextConfig getDefaultWebXmlFragment
+INFO: No global web.xml found
+thg 9 26, 2026 10:40:15 CH org.apache.jasper.servlet.TldScanner scanJars
+INFO: At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+thg 9 26, 2026 10:40:17 CH org.apache.catalina.core.ApplicationContext log
+INFO: TaskFlow started: the database is ready
+thg 9 26, 2026 10:40:17 CH org.apache.catalina.core.ApplicationContext log
+INFO: com.taskflow.web.HelloServlet: init(): HelloServlet created once, at deployment
+thg 9 26, 2026 10:40:17 CH org.apache.coyote.AbstractProtocol start
+INFO: Starting ProtocolHandler ["http-nio-auto-1-61728"]
+]]></system-err>
+  </testcase>
+  <testcase name="theSessionRegistryKnowsWhoIsLoggedIn" classname="com.taskflow.web.S45AdvancedServletTest" time="3.506">
+    <system-out><![CDATA[22:40:20.397 INFO  [b2bdc5407b35df3f] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 2ms
+22:40:20.649 INFO  [ba3b8596d66bdef1] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 249ms
+22:40:20.678 INFO  [71792fb4c54a0163] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 2ms
+22:40:20.928 INFO  [cd274f31e92155b] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 247ms
+22:40:22.476 INFO  [fbf949c32cb41054] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit 200 1545ms
+22:40:23.844 INFO  [c779107dcb29c835] c.t.w.f.RequestLoggingFilter - GET /taskflow/tasks 200 1351ms
+22:40:23.866 INFO  [e408a91e91b50415] c.t.w.f.RequestLoggingFilter - POST /taskflow/logout 303 8ms
+22:40:23.875 INFO  [ff6a8b2a372de9ef] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit 200 6ms
+]]></system-out>
+  </testcase>
+  <testcase name="adminsReadTheAuditLogWithFiltersAndPages" classname="com.taskflow.web.S45AdvancedServletTest" time="1.185">
+    <system-out><![CDATA[22:40:23.910 INFO  [482ee04cc33413ae] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 8ms
+22:40:24.176 INFO  [22ae1fb2c58745f5] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 200 263ms
+22:40:24.183 INFO  [31b1054b203baa39] c.t.w.f.RequestLoggingFilter - GET /taskflow/login 200 1ms
+22:40:24.428 INFO  [3a5e8c80e63c1eb6] c.t.w.f.RequestLoggingFilter - POST /taskflow/login 303 242ms
+22:40:24.438 INFO  [9ca056e935e495ff] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit?type=LOGIN_FAIL&user=%3Cb%3Eprobe1456202196941100%3C%2Fb%3E 200 7ms
+22:40:24.447 INFO  [eefb35fe0f1b957d] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.775 INFO  [3b21d8de9e8d1ac5] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.785 INFO  [6ff3d528bdc7b32] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.797 INFO  [ee834dc6610493c2] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.808 INFO  [a96f6edef99cd1a9] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.818 INFO  [e0fe211c62f577eb] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.829 INFO  [7febe73ef42980a9] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.839 INFO  [c7fd30c2a7e4eb03] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.849 INFO  [e6a60102577e6cbe] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.860 INFO  [e88bf58625705bae] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.870 INFO  [5295a34cd2cb5341] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.882 INFO  [65cfc775dea3eaaf] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.893 INFO  [2b33c70787d5f45c] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 8ms
+22:40:24.904 INFO  [890bc796f67ef0d6] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.915 INFO  [f5ad78b165a1bdb2] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.926 INFO  [b67404083d5feea6] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.936 INFO  [cc738b6b09c1d073] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.948 INFO  [5087781db7c49a6f] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.959 INFO  [92e86403de46e0cd] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.968 INFO  [6be26d53542131c6] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:24.978 INFO  [dbd251844eaa965c] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:24.988 INFO  [13609ae5dec0ac09] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:25.000 INFO  [42469c047efe087c] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 8ms
+22:40:25.011 INFO  [a925507c31c726f6] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:25.024 INFO  [58a0dbf4a217892d] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 7ms
+22:40:25.034 INFO  [e2e0ba691bb28b2e] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/users 403 6ms
+22:40:25.057 INFO  [3b7ac82b534dc0d7] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit?type=ACCESS_DENIED&user=alice 200 19ms
+22:40:25.070 INFO  [9bb5772312b857ba] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit?type=DROP+TABLE 200 9ms
+22:40:25.079 INFO  [23f229d5c59a1760] c.t.w.f.RequestLoggingFilter - GET /taskflow/admin/audit 403 7ms
+]]></system-out>
+  </testcase>
+  <testcase name="anInstanceFieldMixesUpConcurrentRequests" classname="com.taskflow.web.S45AdvancedServletTest" time="0.13">
+    <system-out><![CDATA[22:40:25.147 INFO  [37baf33ed524d82c] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user1 200 56ms
+22:40:25.147 INFO  [cfb96b2dfc071569] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user13 200 53ms
+22:40:25.147 INFO  [c8a31c05a0abfeaa] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user9 200 56ms
+22:40:25.147 INFO  [688a7f01dbb6beb1] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user19 200 54ms
+22:40:25.147 INFO  [1df51dd1bfea950d] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user15 200 55ms
+22:40:25.147 INFO  [9a3b9bfd5c012437] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user17 200 54ms
+22:40:25.147 INFO  [74a0268135622cf7] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user16 200 55ms
+22:40:25.147 INFO  [6c598dbda293848a] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user0 200 56ms
+22:40:25.147 INFO  [e64a855f7f59b313] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user2 200 56ms
+22:40:25.147 INFO  [8eeafd229c32a28a] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user12 200 54ms
+22:40:25.147 INFO  [708bff42c6808097] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user5 200 56ms
+22:40:25.147 INFO  [b386176fbd9660a8] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user8 200 56ms
+22:40:25.147 INFO  [2bfaf2e608f1f59a] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user6 200 56ms
+22:40:25.147 INFO  [76cdddcc0a5ed1f4] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user14 200 53ms
+22:40:25.147 INFO  [2a2d3a9855f837b7] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user7 200 56ms
+22:40:25.147 INFO  [b20bd769e0d5e617] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user11 200 56ms
+22:40:25.147 INFO  [f00b02e09594130b] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user4 200 56ms
+22:40:25.147 INFO  [ea0e82634b8dbbf6] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user3 200 56ms
+22:40:25.147 INFO  [2f11350a2bf7f4e0] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user10 200 55ms
+22:40:25.147 INFO  [d7072cc8c0bbf7c8] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user18 200 54ms
+22:40:25.209 INFO  [66b1f2818eff5f7f] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user14&mode=safe 200 50ms
+22:40:25.209 INFO  [146dc881f00dcc27] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user16&mode=safe 200 50ms
+22:40:25.210 INFO  [e172abb0dd03ca2c] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user1&mode=safe 200 52ms
+22:40:25.209 INFO  [240b3faff08bd066] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user2&mode=safe 200 51ms
+22:40:25.209 INFO  [ecaef0a5cc1a0e4f] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user13&mode=safe 200 50ms
+22:40:25.209 INFO  [b5a25734b7da4b69] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user7&mode=safe 200 50ms
+22:40:25.209 INFO  [9ecfe3d34cbf43d8] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user9&mode=safe 200 50ms
+22:40:25.209 INFO  [74df8f25d579ead1] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user6&mode=safe 200 51ms
+22:40:25.209 INFO  [64b1b25279558144] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user17&mode=safe 200 50ms
+22:40:25.209 INFO  [81a7d25c624282d8] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user19&mode=safe 200 50ms
+22:40:25.209 INFO  [c2321994cfb38aa1] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user11&mode=safe 200 50ms
+22:40:25.209 INFO  [ef4d06eeeab281a9] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user10&mode=safe 200 50ms
+22:40:25.209 INFO  [c125129f2bc49b6d] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user8&mode=safe 200 50ms
+22:40:25.209 INFO  [8e061e8a5b59ef59] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user5&mode=safe 200 51ms
+22:40:25.209 INFO  [7d8f53270af96875] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user12&mode=safe 200 50ms
+22:40:25.209 INFO  [5875b758c1985499] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user0&mode=safe 200 52ms
+22:40:25.209 INFO  [c6c779097e704ce3] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user18&mode=safe 200 50ms
+22:40:25.209 INFO  [67bc9e4186fcb816] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user15&mode=safe 200 50ms
+22:40:25.210 INFO  [b185679af7cf1ae] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user4&mode=safe 200 52ms
+22:40:25.210 INFO  [b4e8cdfe9bb5239c] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/race?who=user3&mode=safe 200 51ms
+]]></system-out>
+  </testcase>
+  <testcase name="slowRequestsAreAudited" classname="com.taskflow.web.S45AdvancedServletTest" time="0.891">
+    <system-out><![CDATA[22:40:25.255 INFO  [eebc0f9e5ad8dbac] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/slow?ms=10 200 20ms
+22:40:25.958 INFO  [aafaac07a53c675f] c.t.w.f.RequestLoggingFilter - GET /taskflow/debug/slow?ms=700 200 700ms
+]]></system-out>
+  </testcase>
+</testsuite>

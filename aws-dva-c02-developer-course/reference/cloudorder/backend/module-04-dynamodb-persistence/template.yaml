@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 4: DynamoDB Single-Table Design, GSI Overloading, and CDC Streams.
+  Demonstrating composite primary keys (PK/SK), Global Secondary Indexes (GSI1PK/GSI1SK),
+  TimeToLive (TTL), Point-In-Time Recovery (PITR), DynamoDB Streams with batch bisection,
+  and raw JSON IAM execution roles.
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 1769 # Exactly 1 full vCPU allocated to Java 21 JVM
+    Runtime: java21
+    Architectures:
+      - x86_64
+    Environment:
+      Variables:
+        STAGE: Prod
+        LOG_LEVEL: INFO
+        TABLE_NAME: !Ref CloudOrderTable
+
+Resources:
+  # ============================================================================
+  # 1. DynamoDB Single-Table Design
+  # ============================================================================
+  CloudOrderTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: CloudOrderTable
+      BillingMode: PAY_PER_REQUEST # On-Demand capacity for burst workloads
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES # Full before-and-after CDC state
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  # ============================================================================
+  # 2. Raw JSON IAM Execution Role for DynamoDB Streams Consumer
+  # ============================================================================
+  OrderStreamProcessorFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: CloudOrderExplicitLoggingPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*:*'
+        - PolicyName: CloudOrderExplicitDynamoDBStreamPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:DescribeStream
+                  - dynamodb:GetRecords
+                  - dynamodb:GetShardIterator
+                  - dynamodb:ListStreams
+                Resource: !GetAtt CloudOrderTable.StreamArn
+
+  # ============================================================================
+  # 3. Serverless Lambda Stream Consumer (Change Data Capture)
+  # ============================================================================
+  OrderStreamProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: com.cloudarchitect.dvac02.persistence.stream.OrderStreamProcessor::handleRequest
+      Role: !GetAtt OrderStreamProcessorFunctionRole.Arn
+      Events:
+        OrderTableStream:
+          Type: DynamoDB
+          Properties:
+            Stream: !GetAtt CloudOrderTable.StreamArn
+            StartingPosition: TRIM_HORIZON
+            BatchSize: 100
+            MaximumBatchingWindowInSeconds: 5
+            BisectBatchOnFunctionError: true # ⚡ Isolates poison pill records in CDC stream
+            RetryAttempts: 3
+
+Outputs:
+  CloudOrderTableName:
+    Description: "DynamoDB CloudOrderTable Name"
+    Value: !Ref CloudOrderTable
+  CloudOrderTableArn:
+    Description: "DynamoDB CloudOrderTable ARN"
+    Value: !GetAtt CloudOrderTable.Arn
+  CloudOrderTableStreamArn:
+    Description: "DynamoDB Streams ARN"
+    Value: !GetAtt CloudOrderTable.StreamArn
+  OrderStreamProcessorFunctionArn:
+    Description: "OrderStreamProcessor Lambda Function ARN"
+    Value: !GetAtt OrderStreamProcessorFunction.Arn

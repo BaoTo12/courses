@@ -1,0 +1,162 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CloudOrder Module 8: AWS X-Ray Active Tracing, Custom Sampling Rules,
+  CloudWatch Metric Filters, and Composite Alarms.
+
+Parameters:
+  Environment:
+    Type: String
+    Default: prod
+    AllowedValues: [dev, staging, prod]
+    Description: Deployment environment tier.
+
+Globals:
+  Function:
+    Runtime: java21
+    Architectures:
+      - arm64
+    MemorySize: 512
+    Timeout: 15
+    Tracing: Active
+    Environment:
+      Variables:
+        ENV: !Ref Environment
+        POWERTOOLS_METRICS_NAMESPACE: CloudOrder/Production
+
+Resources:
+
+  # ----------------------------------------------------------------------------
+  # 1. AWS X-Ray Custom Sampling Rule
+  # ----------------------------------------------------------------------------
+  CloudOrderSamplingRule:
+    Type: AWS::XRay::SamplingRule
+    Properties:
+      SamplingRule:
+        RuleName: !Sub cloudorder-sampling-${Environment}
+        Description: Production sampling rule balancing cost and observability
+        Priority: 100
+        FixedRate: 0.05        # 5% of requests after reservoir is depleted
+        ReservoirSize: 2       # 2 requests sampled per second guaranteed
+        ServiceName: '*'
+        ServiceType: '*'
+        Host: '*'
+        HTTPMethod: '*'
+        URLPath: '*'
+        Version: 1
+        ResourceARN: '*'
+
+  # ----------------------------------------------------------------------------
+  # 2. CloudWatch Log Group & Metric Filter
+  # ----------------------------------------------------------------------------
+  OrderServiceLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/cloudorder-observability-${Environment}
+      RetentionInDays: 30
+
+  OrderErrorMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref OrderServiceLogGroup
+      FilterPattern: '[timestamp, level = ERROR*, message]'
+      MetricTransformations:
+        - MetricName: OrderProcessingErrors
+          MetricNamespace: CloudOrder/Operations
+          MetricValue: '1'
+          DefaultValue: 0
+
+  # ----------------------------------------------------------------------------
+  # 3. CloudWatch Base Alarms
+  # ----------------------------------------------------------------------------
+  OrderErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub CloudOrder-HighErrors-${Environment}
+      AlarmDescription: Triggers when error log filter records 5 or more errors in 1 minute
+      Namespace: CloudOrder/Operations
+      MetricName: OrderProcessingErrors
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 5
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  OrderLatencyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub CloudOrder-P95LatencySpike-${Environment}
+      AlarmDescription: Triggers when P95 latency exceeds 500ms for two consecutive 5-minute periods
+      Namespace: CloudOrder/Production
+      MetricName: OrderProcessingLatencyMs
+      ExtendedStatistic: p95
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 500
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+
+  # ----------------------------------------------------------------------------
+  # 4. CloudWatch Composite Alarm (Prevents Alert Fatigue)
+  # ----------------------------------------------------------------------------
+  CriticalOrderCompositeAlarm:
+    Type: AWS::CloudWatch::CompositeAlarm
+    Properties:
+      AlarmName: !Sub CloudOrder-CriticalDegradation-${Environment}
+      AlarmDescription: Fires when Error Count is High OR P95 Latency breaches checkout threshold
+      AlarmRule: !Sub 'ALARM("${OrderErrorAlarm}") OR ALARM("${OrderLatencyAlarm}")'
+      ActionsSuppressor: !Ref OrderErrorAlarm
+      ActionsSuppressorWaitPeriod: 60
+      ActionsSuppressorExtensionPeriod: 60
+
+  # ----------------------------------------------------------------------------
+  # 5. Raw JSON IAM Role with X-Ray Tracing Permissions
+  # ----------------------------------------------------------------------------
+  ObservabilityFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub cloudorder-observability-role-${Environment}
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: XRayAndCloudWatchPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              # CloudWatch Logs
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub 'arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*'
+              # AWS X-Ray Daemon Ingestion
+              - Effect: Allow
+                Action:
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                Resource: '*'
+              # CloudWatch Metric Data (Optional fallback)
+              - Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                Resource: '*'
+
+Outputs:
+  SamplingRuleArn:
+    Description: X-Ray Sampling Rule ARN
+    Value: !GetAtt CloudOrderSamplingRule.RuleARN
+
+  LogGroupName:
+    Description: CloudWatch Log Group
+    Value: !Ref OrderServiceLogGroup
+
+  CompositeAlarmArn:
+    Description: ARN of the Composite Alarm
+    Value: !GetAtt CriticalOrderCompositeAlarm.Arn
