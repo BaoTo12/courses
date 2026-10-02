@@ -1,10 +1,13 @@
 # Lecture 02. Immutability: changing data by making copies
 
 > **By the end you can:** explain the difference between a value and a reference; show why `===` cannot see a
-> mutation; update objects, arrays and nested data without mutating them; use `deepFreeze` to catch mutations.
-> **New terms in this lesson:** reference, mutation, immutable update, shallow copy, structural sharing, freezing
-> **You should already know:** state, view, event, one-way data flow ([01-why-redux](01-why-redux.md))
-> **Project files you fill in:** `src/utils/deepFreeze.js` (🧩 02.1), `demos/02-immutability.mjs` (🧩 02.2)
+> mutation; update objects, arrays and nested data without mutating them; use `deepFreeze` to catch mutations, and
+> `readonly` to forbid them at compile time.
+> **New terms in this lesson:** reference, mutation, immutable update, shallow copy, structural sharing, freezing,
+> `readonly`
+> **You should already know:** state, view, event, one-way data flow ([01-why-redux](01-why-redux.md)); TypeScript
+> generics (`function f<T>(value: T): T`)
+> **Project files you fill in:** `src/utils/deepFreeze.ts` (🧩 02.1), `demos/02-immutability.ts` (🧩 02.2)
 
 In lecture 01, `handle` changed the state in place: `state.todos.push(…)`. Redux forbids that. To understand why,
 we need to look at how JavaScript stores objects.
@@ -15,7 +18,7 @@ When you create an object, JavaScript puts it somewhere in memory. The variable 
 it contains **where** the object is. That "where" is called a **reference**. Think of it as the address of a house:
 copying the address onto another piece of paper doesn't build a second house.
 
-```js
+```ts
 const a = { text: 'Learn Redux' };
 const b = a;              // copies the REFERENCE (the address), not the object
 b.text = 'Learn Redux today';
@@ -37,7 +40,7 @@ same things?". Two different objects with identical contents are not `===`.
 A **mutation** is a change made *inside* an existing object or array: assigning a property (`todo.completed =
 true`), `push`, `splice`, `sort`, `delete obj.key`… The reference stays the same; the contents change.
 
-```js
+```ts
 const todos = [{ id: 1, text: 'Learn Redux', completed: false }];
 const before = todos;
 todos.push({ id: 2, text: 'Walk the dog', completed: false });
@@ -56,7 +59,7 @@ change, and leaves the old one exactly as it was. Then:
 - old !== new → "something changed", detected with one `===`;
 - the old value is still available (useful for "undo", and for tools that show before/after).
 
-The JavaScript tools for this are the spread syntax `...` and the array methods that return a new array:
+The tools for this are the spread syntax `...` and the array methods that return a new array:
 
 | Goal | Mutating (forbidden in Redux) | Immutable (allowed) |
 |---|---|---|
@@ -66,19 +69,22 @@ The JavaScript tools for this are the spread syntax `...` and the array methods 
 | change a field | `obj.status = 'all'` | `{ ...obj, status: 'all' }` |
 
 `{ ...obj, status: 'all' }` means: a new object, with all the fields of `obj` copied in, then `status` set to
-`'all'` (a later field overwrites an earlier one).
+`'all'` (a later field overwrites an earlier one). TypeScript gives the result the same type as `obj`.
 
 ## 4. Shallow copy, and why nested data needs more copies
 
 `{ ...obj }` and `[...list]` make a **shallow copy**: a new object at the top level, whose fields hold the **same
 references** as the original. Nested objects are not copied; they are shared.
 
-```js
-const state = { filters: { status: 'all', colors: [] } };
+```ts
+const state: { filters: { status: string; colors: string[] } } = { filters: { status: 'all', colors: [] } };
 const wrongCopy = { ...state };          // a new outer object…
 wrongCopy.filters.colors.push('red');    // …but filters is the SAME object as state.filters
 state.filters.colors;                    // ['red']: the original changed too
 ```
+
+(The type annotation on `state` is there because TypeScript would otherwise infer `colors: never[]`, an array
+that can never hold anything, from the empty `[]`.)
 
 ```text
   state ─────►  { filters: ─┐ }
@@ -88,7 +94,7 @@ state.filters.colors;                    // ['red']: the original changed too
 
 The rule: **copy every level you change, on the path from the top down to the change.**
 
-```js
+```ts
 const rightCopy = {
   ...state2,                                    // level 1: a new state
   filters: {
@@ -104,7 +110,7 @@ When you change one todo in a list of 1,000, you don't copy all 1,000. `map` bui
 **same** object for every todo it doesn't change. Only the changed todo is a new object. Reusing the unchanged
 parts like this is called **structural sharing**.
 
-```js
+```ts
 const after = list2.map((todo) => (todo.id === 2 ? { ...todo, completed: true } : todo));
 after[0] === list2[0];   // true: todo 1 wasn't changed, so it's the same object
 after[1] === list2[1];   // false: todo 2 changed, so it's a new object
@@ -131,37 +137,59 @@ module (our files are modules) a failed write throws an error instead of silentl
 
 ### Build step 02.1: `deepFreeze`
 
-Open `src/utils/deepFreeze.js`. Replace the placeholder `🧩 02.1` (the whole `deepFreeze` function) with:
+Open `src/utils/deepFreeze.ts`. Replace the placeholder `🧩 02.1` (the whole `deepFreeze` function) with:
 
-```js
+```ts
 // Freezes an object AND everything inside it, so any later mutation throws an error.
-export function deepFreeze(value) {
+export function deepFreeze<T>(value: T): T {
   if (value === null || typeof value !== 'object' || Object.isFrozen(value)) return value;
   Object.freeze(value); // this level: no adding, removing or changing properties
-  for (const key of Object.keys(value)) {
-    deepFreeze(value[key]); // then every object nested inside
+  for (const inner of Object.values(value)) {
+    deepFreeze(inner); // then every value nested inside
   }
   return value;
 }
 ```
 
 What each part does:
+- `<T>` makes the function **generic**: it returns the same type it receives, so `deepFreeze(todos)` is still typed
+  as the todos array.
 - The first line stops on values that can't or needn't be frozen: `null`, numbers and strings (they are already
   unchangeable), and objects that are already frozen.
 - `Object.freeze(value)` freezes this level.
-- The loop calls `deepFreeze` on every property, so arrays inside objects, objects inside arrays, and so on are
+- After that `if`, TypeScript knows `value` is an object. `Object.values(value)` gives the values of its properties
+  (for an array: its items).
+- The loop calls `deepFreeze` on every one of them, so arrays inside objects, objects inside arrays, and so on are
   frozen too. Calling itself on smaller and smaller parts is called **recursion**.
-- It returns the same value, so you can write `const frozen = deepFreeze([...])`.
 
 We'll use it in lecture 03 to **prove** that our reducer never mutates its input.
 
+## 7. `readonly`: forbidding mutation before the code runs
+
+`deepFreeze` catches mutations **while the code runs**. TypeScript can also refuse them **before** it runs:
+
+```ts
+interface Todo {
+  readonly id: number;
+  readonly text: string;
+}
+const list: readonly Todo[] = [{ id: 1, text: 'Learn Redux' }];
+list.push({ id: 2, text: 'x' }); // ✗ compile error: 'push' does not exist on type 'readonly Todo[]'
+list[0].text = 'changed';         // ✗ compile error: cannot assign to 'text' because it is a read-only property
+```
+
+A `readonly` property can't be assigned; a `readonly T[]` array has no mutating methods. `Readonly<T>` makes every
+property of a type `readonly` (one level). These checks exist only in the type checker: at runtime, a `readonly`
+array is a normal array. This course keeps its types simple and doesn't mark everything `readonly`, but it's a good
+habit in Redux code, and Redux Toolkit's types use it.
+
 ## Build step 02.2: the demo
 
-Open `demos/02-immutability.mjs`. Replace the placeholder `🧩 02.2` with:
+Open `demos/02-immutability.ts`. Replace the placeholder `🧩 02.2` with:
 
-```js
+```ts
 // Lecture 02 demo: references, mutation, and immutable updates.
-import { deepFreeze } from '../src/utils/deepFreeze.js';
+import { deepFreeze } from '../src/utils/deepFreeze';
 
 console.log('— 1. Two variables, one object —');
 const a = { text: 'Learn Redux' };
@@ -190,12 +218,13 @@ console.log('  after[0] === list2[0] →', after[0] === list2[0], '(untouched to
 console.log('  after[1] === list2[1] →', after[1] === list2[1], '(changed todo: a new object)');
 
 console.log('\n— 5. The shallow-copy trap —');
-const state = { filters: { status: 'all', colors: [] } };
+type DemoState = { filters: { status: string; colors: string[] } };
+const state: DemoState = { filters: { status: 'all', colors: [] } };
 const wrongCopy = { ...state }; // copies ONE level only
 wrongCopy.filters.colors.push('red');
 console.log('  state.filters.colors =', state.filters.colors, '(the original changed too!)');
 
-const state2 = { filters: { status: 'all', colors: [] } };
+const state2: DemoState = { filters: { status: 'all', colors: [] } };
 const rightCopy = { ...state2, filters: { ...state2.filters, colors: [...state2.filters.colors, 'red'] } };
 console.log('  state2.filters.colors =', state2.filters.colors, '| rightCopy.filters.colors =', rightCopy.filters.colors);
 
@@ -204,18 +233,20 @@ const frozen = deepFreeze([{ id: 1, text: 'Learn Redux', completed: false }]);
 try {
   frozen[0].completed = true;
 } catch (error) {
-  console.log('  ❌ frozen[0].completed = true →', error.message);
+  console.log('  ❌ frozen[0].completed = true →', (error as Error).message);
 }
 try {
-  frozen.push({ id: 2 });
+  frozen.push({ id: 2, text: 'Walk the dog', completed: false });
 } catch (error) {
-  console.log('  ❌ frozen.push(…) →', error.message);
+  console.log('  ❌ frozen.push(…) →', (error as Error).message);
 }
 const copy = frozen.map((todo) => ({ ...todo, completed: true }));
 console.log('  ✅ a copy works: copy[0].completed =', copy[0].completed, '| frozen[0].completed =', frozen[0].completed);
 ```
 
-Each numbered part of the demo is one section of this lecture, run for real.
+Each numbered part of the demo is one section of this lecture, run for real. In a `catch`, TypeScript types the
+error as `unknown` (anything can be thrown), so `(error as Error).message` uses a **type assertion** (`as`): it
+tells TypeScript "treat this as an `Error`" so we can read its message. An assertion changes nothing at runtime. Imports leave out the `.ts` extension: `tsx` and TypeScript find the file.
 
 ## Run it
 
@@ -223,7 +254,7 @@ Each numbered part of the demo is one section of this lecture, run for real.
 npm run lesson 02
 ```
 
-Real output:
+Expected output (not run):
 
 ```text
 — 1. Two variables, one object —
@@ -261,8 +292,10 @@ Walk-through:
 - **Part 4.** Only the changed todo is new (`false`); the other is shared (`true`): structural sharing.
 - **Part 5.** The shallow copy shared `filters`, so pushing into the copy's colors changed the original. Copying
   every level on the path (`rightCopy`) leaves `state2` untouched.
-- **Part 6.** On frozen data, both mutations throw, with messages that name the problem. The immutable update
-  (`map` + `{ ...todo }`) works, because it never writes into the frozen objects; it builds new ones.
+- **Part 6.** On frozen data, both mutations throw, with messages that name the problem. TypeScript allowed both
+  lines (`deepFreeze` returns the normal type, not a `readonly` one), so the error only appears at runtime. The
+  immutable update (`map` + `{ ...todo }`) works, because it never writes into the frozen objects; it builds new
+  ones.
 
 ## The whole picture
 
@@ -270,7 +303,8 @@ Walk-through:
 mutation:          old ──► [ a, b ] ──(push c)──► same array [ a, b, c ]    old === new → "nothing changed" ✗
 immutable update:  old ──► [ a, b ]                                           old untouched
                    new ──► [ a, b, c ]   (a and b shared, c new)              old !== new → "changed" ✓
-deepFreeze(old):   any mutation of old now THROWS → bugs show up immediately
+deepFreeze(old):   any mutation of old now THROWS at runtime
+readonly types:    any mutation of old is a COMPILE error
 ```
 
 ## Summary
@@ -282,7 +316,8 @@ deepFreeze(old):   any mutation of old now THROWS → bugs show up immediately
 | **immutable update** | building a new object/array that contains the change, leaving the old one untouched |
 | **shallow copy** | a new top-level object whose fields still point at the same nested objects |
 | **structural sharing** | the new value reuses every unchanged part of the old value |
-| **freezing** | `Object.freeze`: makes later mutations fail (throw, in modules); `deepFreeze` does it to every level |
+| **freezing** | `Object.freeze`: makes later mutations throw; `deepFreeze` does it to every level |
+| **`readonly`** | a TypeScript marker that makes mutation a compile error (types only; nothing changes at runtime) |
 
-**Next lecture:** [03-actions-and-reducers](03-actions-and-reducers.md): we describe events as *actions* and write
-the function that turns "old state + action" into a new state: the *reducer* of our todo app.
+**Next lecture:** [03-actions-and-reducers](03-actions-and-reducers.md): we describe events as *actions*, type them,
+and write the function that turns "old state + action" into a new state: the *reducer* of our todo app.

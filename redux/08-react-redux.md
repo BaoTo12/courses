@@ -1,26 +1,26 @@
 # Lecture 08. React-Redux: connecting React components to the store
 
 > **By the end you can:** build `Provider`, `useSelector` and `useDispatch` yourself on top of React's own hooks;
-> explain exactly when a component re-renders; build the todo app's components; switch to the real `react-redux`;
-> decide what belongs in Redux and what stays in a component.
-> **New terms in this lesson:** JSX and tsx, re-render, React context, `useSyncExternalStore`, `Provider`,
-> `useSelector`, `useDispatch`, component state vs global state
-> **You should already know:** selector, UI binding ([07](07-redux-and-a-ui.md)); store, `subscribe`
-> ([05](05-the-store.md)); `===` on references ([02](02-immutability.md)); React basics: components, props,
-> `useState`
-> **Project files you fill in:** `src/from-scratch/reactRedux.jsx` (🧩 08.1), `src/app/redux-bindings.js` (🧩 08.2),
-> `src/ui/Header.jsx`, `TodoListItem.jsx`, `TodoList.jsx`, `Footer.jsx`, `App.jsx` (🧩 08.3–08.7),
-> `src/main.jsx` (🧩 08.8), `demos/08-react-redux.jsx` (🧩 08.10)
+> give them the app's types; explain exactly when a component re-renders; build the todo app's components; switch
+> to the real `react-redux`; decide what belongs in Redux and what stays in a component.
+> **New terms in this lesson:** TSX and tsx, re-render, React context, `useSyncExternalStore`, `Provider`,
+> `useSelector`, `useDispatch`, typed hooks (`useAppSelector`, `useAppDispatch`), component state vs global state
+> **You should already know:** selector, UI binding ([07](07-redux-and-a-ui.md)); store, `subscribe`, `AppDispatch`
+> ([05](05-the-store.md)); `RootState` ([04](04-combining-reducers.md)); `===` on references
+> ([02](02-immutability.md)); React basics: components, props, `useState`
+> **Project files you fill in:** `src/from-scratch/reactRedux.tsx` (🧩 08.1), `src/app/redux-bindings.ts` (🧩 08.2),
+> `src/ui/Header.tsx`, `TodoListItem.tsx`, `TodoList.tsx`, `Footer.tsx`, `App.tsx` (🧩 08.3–08.7),
+> `src/main.tsx` (🧩 08.8), `demos/08-react-redux.tsx` (🧩 08.10)
 
 Lecture 07 connected a plain page to the store with three connections: read, dispatch, redraw. React needs the same
 three. This lecture builds them with React's own tools, then swaps in the real library.
 
-## 1. JSX, and running it with tsx
+## 1. TSX, and running it with tsx
 
-React components are usually written in **JSX**: HTML-like tags inside JavaScript (`<li>{todo.text}</li>`). Node
-can't run JSX directly. The project's `npm run lesson` runs each demo with **tsx**, a tool that translates JSX (and
-TypeScript) to plain JavaScript on the fly. The given `tsconfig.json` tells it to use React's JSX format. Files
-containing JSX end in `.jsx`.
+React components are written in **JSX**: HTML-like tags inside code (`<li>{todo.text}</li>`). In TypeScript the
+same syntax is called **TSX**, and files containing it end in `.tsx`. TypeScript type-checks the tags too: a
+missing prop or a wrong prop type is a compile error. Node can't run TSX directly; `tsx` (the tool that runs our
+demos) translates it on the fly, as told by `"jsx": "react-jsx"` in `tsconfig.json`.
 
 ## 2. Re-render: when React calls a component again
 
@@ -44,14 +44,14 @@ Many components need the store. Passing it as a prop through every level (`<App 
 **React context** lets a component make a value available to **all** components below it, at any depth, without
 props:
 
-```jsx
-const StoreContext = createContext(null);              // 1. create a context (once)
+```tsx
+const StoreContext = createContext<AnyStore | null>(null);   // 1. create a context (once), with its value's type
 
-<StoreContext.Provider value={store}>                  // 2. a component near the top provides a value
+<StoreContext.Provider value={store}>                         // 2. a component near the top provides a value
   <App />
 </StoreContext.Provider>
 
-const store = useContext(StoreContext);               // 3. any component below reads it
+const store = useContext(StoreContext);                       // 3. any component below reads it
 ```
 
 ## 4. `useSyncExternalStore`: subscribing a component to a store
@@ -59,7 +59,7 @@ const store = useContext(StoreContext);               // 3. any component below 
 React has a hook made for exactly connection 3 of lecture 07: **`useSyncExternalStore`**. You give it two
 functions:
 
-```js
+```ts
 const value = useSyncExternalStore(subscribe, getSnapshot);
 ```
 
@@ -77,42 +77,54 @@ done by React.
 
 ### Build step 08.1: `Provider`, `useDispatch`, `useSelector`
 
-Open `src/from-scratch/reactRedux.jsx`. Replace the placeholder `🧩 08.1` with:
+Open `src/from-scratch/reactRedux.tsx`. Replace the placeholder `🧩 08.1` with:
 
-```jsx
+```tsx
 // Our own version of react-redux's Provider, useSelector and useDispatch, to see how they work.
-import { createContext, useContext, useSyncExternalStore } from 'react';
+import { createContext, useContext, useSyncExternalStore, type ReactNode } from 'react';
 
-const StoreContext = createContext(null);
+// The part of a store these bindings need. Any Redux store fits this shape.
+interface AnyStore {
+  getState(): any;
+  subscribe(listener: () => void): () => void;
+  dispatch(action: any): any;
+}
 
-export function Provider({ store, children }) {
+const StoreContext = createContext<AnyStore | null>(null);
+
+export function Provider({ store, children }: { store: AnyStore; children: ReactNode }) {
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;
 }
 
-function useStore() {
+function useStore(): AnyStore {
   const store = useContext(StoreContext);
   if (!store) throw new Error('No store found: wrap your app in <Provider store={store}>');
   return store;
 }
 
-export function useDispatch() {
+export function useDispatch(): any {
   return useStore().dispatch;
 }
 
-export function useSelector(selector) {
+export function useSelector<Selected>(selector: (state: any) => Selected): Selected {
   const store = useStore();
   return useSyncExternalStore(store.subscribe, () => selector(store.getState()));
 }
 ```
 
 What each part does:
+- `AnyStore` describes what the bindings use from a store. It's typed with `any` on purpose: this file must work
+  with **any** app's store, so it can't know `RootState` or `AppDispatch`. Step 08.2 adds the app's types on top.
 - **`Provider`** is a component that puts the store into the context, so everything inside it can find the store.
-- `useStore()` reads the store from the context. If a component is rendered outside a `Provider`, it throws a clear
-  error instead of failing later with "cannot read properties of null".
+  Its props are typed inline: `store` and `children` (`ReactNode` is "anything React can render").
+- `useStore()` reads the store from the context. If a component is rendered outside a `Provider`, the context
+  value is `null`, and it throws a clear error instead of failing later with "cannot read properties of null".
+  After the `if`, TypeScript knows `store` isn't `null`.
 - **`useDispatch()`** returns the store's `dispatch`: connection 2 (screen → actions).
 - **`useSelector(selector)`** is connections 1 and 3 together. It subscribes the component to the store, and its
   snapshot is "the selector applied to the current state". After every dispatch, React runs the selector again and
-  re-renders the component only if the selected value is a different reference.
+  re-renders the component only if the selected value is a different reference. The type parameter `Selected` is
+  inferred from the selector: `useSelector(selectRemainingCount)` returns a `number`.
 
 Run it by hand: `Footer` calls `useSelector(selectRemainingCount)`, then `todoToggled` is dispatched:
 1. The store runs the reducer, then calls its subscribers, including React's callback for `Footer`.
@@ -122,17 +134,37 @@ Run it by hand: `Footer` calls `useSelector(selectRemainingCount)`, then `todoTo
 
 So the **selector decides** which store changes a component reacts to.
 
-### Build step 08.2: one place to import the bindings from
+### Build step 08.2: typed hooks, in one place
 
-Open `src/app/redux-bindings.js`. Replace the placeholder `🧩 08.2` with:
+With `state: any`, a component could write `useSelector((state) => state.todoz)` and TypeScript wouldn't notice.
+We want the hooks to know the app's types: `state` is a `RootState`, and `dispatch` is an `AppDispatch`. Instead of
+writing those types in every component, we create, once, **typed hooks**: the same functions, exported under new
+names with the app's types attached.
 
-```js
-// Where every component imports Provider / useSelector / useDispatch from.
-export { Provider, useSelector, useDispatch } from '../from-scratch/reactRedux.jsx';
+Open `src/app/redux-bindings.ts`. Replace the placeholder `🧩 08.2` with:
+
+```ts
+// Where every component imports Provider and the hooks from.
+import type { TypedUseSelectorHook } from 'react-redux';
+import { Provider, useDispatch, useSelector } from '../from-scratch/reactRedux';
+import type { RootState } from './rootReducer';
+import type { AppDispatch } from './store';
+
+export { Provider };
+
+// The same hooks, with the app's types attached.
+export const useAppDispatch: () => AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 ```
 
-All components import from this file. In step 08.9 we change this one line to switch the whole app to the real
-library.
+What each part does:
+- `useAppDispatch` **is** `useDispatch`; only its declared type differs: "a function returning an `AppDispatch`".
+  So `dispatch(…)` in components is checked against `RootAction`.
+- `useAppSelector` **is** `useSelector`, declared with the type `TypedUseSelectorHook<RootState>`, a type from
+  react-redux meaning "a `useSelector` whose `state` is a `RootState`". Now `useAppSelector((state) =>
+  state.todoz)` is a compile error, and `useAppSelector((state) => state.todos)` returns `TodosState`.
+- All components import from this file. In step 08.9 we change one line here to switch the whole app to the real
+  library.
 
 ## 6. The components
 
@@ -148,18 +180,18 @@ App
 
 ### Build step 08.3: `Header`
 
-Open `src/ui/Header.jsx`. Replace the placeholder `🧩 08.3` with:
+Open `src/ui/Header.tsx`. Replace the placeholder `🧩 08.3` with:
 
-```jsx
-import { useState } from 'react';
-import { useDispatch } from '../app/redux-bindings.js';
+```tsx
+import { useState, type KeyboardEvent } from 'react';
+import { useAppDispatch } from '../app/redux-bindings';
 
 export function Header() {
   const [text, setText] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   console.log('        🖼  Header renders');
 
-  function handleKeyDown(event) {
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     const trimmed = text.trim();
     if (event.key === 'Enter' && trimmed) {
       dispatch({ type: 'todos/todoAdded', payload: trimmed });
@@ -182,7 +214,9 @@ export function Header() {
 
 What each part does:
 - `text` is the text being typed, kept in the **component's own state** (`useState`), not in Redux. Section 8
-  explains why.
+  explains why. `useState('')` infers the type `string`.
+- `KeyboardEvent<HTMLInputElement>`: React's type for a key event on an `<input>`. (In `onChange`, the event's type
+  is inferred from the JSX, so it needs no annotation.)
 - `onChange` updates `text` on every key, so `Header` re-renders on every key. Only `Header`: no other component
   uses `text`.
 - On Enter with some text: dispatch `todoAdded`, then empty the input. Like the plain page of lecture 07, `Header`
@@ -190,15 +224,16 @@ What each part does:
 
 ### Build step 08.4: `TodoListItem`
 
-Open `src/ui/TodoListItem.jsx`. Replace the placeholder `🧩 08.4` with:
+Open `src/ui/TodoListItem.tsx`. Replace the placeholder `🧩 08.4` with:
 
-```jsx
-import { useDispatch } from '../app/redux-bindings.js';
+```tsx
+import { useAppDispatch } from '../app/redux-bindings';
+import type { Todo } from '../features/todos/todosSlice';
 
 const COLORS = ['green', 'blue', 'red'];
 
-export function TodoListItem({ todo }) {
-  const dispatch = useDispatch();
+export function TodoListItem({ todo }: { todo: Todo }) {
+  const dispatch = useAppDispatch();
   console.log(`        🖼  TodoListItem #${todo.id} renders`);
 
   return (
@@ -229,24 +264,24 @@ export function TodoListItem({ todo }) {
 ```
 
 What each part does:
-- It receives the todo object as a prop from `TodoList`.
+- It receives the todo object as a prop, typed `{ todo: Todo }`.
 - The checkbox, the dropdown and the ✕ button each dispatch one of the actions of lecture 03, with the payload that
-  action expects.
+  action's type requires.
 - `checked={todo.completed}` and `value={todo.color}`: what the controls show comes **from the state**. Clicking the
   checkbox doesn't tick it directly; it dispatches, the state changes, and the new render shows it ticked.
 - `{' '}` puts a space between the parts, so the printed screen is readable.
 
 ### Build step 08.5: `TodoList`
 
-Open `src/ui/TodoList.jsx`. Replace the placeholder `🧩 08.5` with:
+Open `src/ui/TodoList.tsx`. Replace the placeholder `🧩 08.5` with:
 
-```jsx
-import { useSelector } from '../app/redux-bindings.js';
-import { selectTodos } from '../features/todos/todosSlice.js';
-import { TodoListItem } from './TodoListItem.jsx';
+```tsx
+import { useAppSelector } from '../app/redux-bindings';
+import { selectTodos } from '../features/todos/todosSlice';
+import { TodoListItem } from './TodoListItem';
 
 export function TodoList() {
-  const todos = useSelector(selectTodos);
+  const todos = useAppSelector(selectTodos);
   console.log('        🖼  TodoList renders');
 
   return (
@@ -259,20 +294,20 @@ export function TodoList() {
 }
 ```
 
-`useSelector(selectTodos)`: `TodoList` re-renders whenever the todos array is a new reference, which is after every
-todos action (the reducer returns a new array), and never after a filters action.
+`useAppSelector(selectTodos)`: `TodoList` re-renders whenever the todos array is a new reference, which is after
+every todos action (the reducer returns a new array), and never after a filters action.
 
 ### Build step 08.6: `Footer`
 
-Open `src/ui/Footer.jsx`. Replace the placeholder `🧩 08.6` with:
+Open `src/ui/Footer.tsx`. Replace the placeholder `🧩 08.6` with:
 
-```jsx
-import { useDispatch, useSelector } from '../app/redux-bindings.js';
-import { selectRemainingCount } from '../features/todos/todosSlice.js';
+```tsx
+import { useAppDispatch, useAppSelector } from '../app/redux-bindings';
+import { selectRemainingCount } from '../features/todos/todosSlice';
 
 export function Footer() {
-  const remaining = useSelector(selectRemainingCount);
-  const dispatch = useDispatch();
+  const remaining = useAppSelector(selectRemainingCount);
+  const dispatch = useAppDispatch();
   console.log('        🖼  Footer renders');
 
   return (
@@ -289,12 +324,12 @@ count actually changes: adding a todo (count +1) re-renders it; changing a color
 
 ### Build step 08.7: `App`
 
-Open `src/ui/App.jsx`. Replace the placeholder `🧩 08.7` with:
+Open `src/ui/App.tsx`. Replace the placeholder `🧩 08.7` with:
 
-```jsx
-import { Header } from './Header.jsx';
-import { TodoList } from './TodoList.jsx';
-import { Footer } from './Footer.jsx';
+```tsx
+import { Header } from './Header';
+import { TodoList } from './TodoList';
+import { Footer } from './Footer';
 
 export function App() {
   return (
@@ -309,15 +344,15 @@ export function App() {
 
 ### Build step 08.8: `renderApp`
 
-Open `src/main.jsx`. Replace the placeholder `🧩 08.8` with:
+Open `src/main.tsx`. Replace the placeholder `🧩 08.8` with:
 
-```jsx
-import { createRoot } from 'react-dom/client';
-import { Provider } from './app/redux-bindings.js';
-import { store } from './app/store.js';
-import { App } from './ui/App.jsx';
+```tsx
+import { createRoot, type Root } from 'react-dom/client';
+import { Provider } from './app/redux-bindings';
+import { store } from './app/store';
+import { App } from './ui/App';
 
-export function renderApp(container) {
+export function renderApp(container: HTMLElement): Root {
   const root = createRoot(container);
   root.render(
     <Provider store={store}>
@@ -329,7 +364,8 @@ export function renderApp(container) {
 ```
 
 What each part does:
-- `createRoot(container)` (from `react-dom`) prepares React to draw into a DOM element; `root.render(…)` draws.
+- `createRoot(container)` (from `react-dom`) prepares React to draw into a DOM element and returns a `Root`;
+  `root.render(…)` draws.
 - `<Provider store={store}>` wraps the **whole** app, so every component can use the hooks.
 - In a browser app, this code would run on page load with `document.getElementById('root')`. Our demo calls
   `renderApp(rootElement)` itself, so it can control when things happen.
@@ -353,7 +389,7 @@ see a newer state than its parent during the same update).
 > **What it does, step by step:** 1. creates one subscription to the store for the whole app; 2. puts the store and
 > that subscription into a React context; 3. renders its children.
 >
-> **What our project passes:** `store` from `src/app/store.js`, and `<App />`.
+> **What our project passes:** `store` from `src/app/store.ts`, and `<App />`.
 >
 > **If you left it out:** the first `useSelector` or `useDispatch` call throws: react-redux can't find the context
 > value (our version's message: "No store found…").
@@ -364,10 +400,11 @@ see a newer state than its parent during the same update).
 > changes.
 >
 > ```ts
-> function useSelector<Selected>(
->   selector: (state: RootState) => Selected,               // what to read
->   equalityFn?: (a: Selected, b: Selected) => boolean,     // how to compare; default: ===
+> function useSelector<State, Selected>(
+>   selector: (state: State) => Selected,                     // what to read
+>   equalityFn?: (a: Selected, b: Selected) => boolean,       // how to compare; default: ===
 > ): Selected;
+> type TypedUseSelectorHook<State> = <Selected>(selector: (state: State) => Selected, …) => Selected;
 > ```
 >
 > **What it does, step by step:**
@@ -378,37 +415,40 @@ see a newer state than its parent during the same update).
 > 4. In development, on the first call, it runs the selector **twice** with the same state and warns if the two
 >    results are not `===` (lecture 10 explains this check).
 >
-> **What our project passes / gets back:** `useSelector(selectTodos)` → the todos array;
-> `useSelector(selectRemainingCount)` → a number.
+> **What our project passes / gets back:** `useAppSelector(selectTodos)` → `TodosState`;
+> `useAppSelector(selectRemainingCount)` → `number`.
 >
-> **If you selected too much** (`useSelector((state) => state)`): the component would re-render after **every**
+> **If you selected too much** (`useAppSelector((state) => state)`): the component would re-render after **every**
 > action, because the root state is a new object after every change.
 
 > **API card: `useDispatch` (package `react-redux`)**
 >
 > ```ts
-> function useDispatch(): Dispatch;   // the store's dispatch (with its middleware chain)
+> function useDispatch<D = Dispatch>(): D;   // the store's dispatch (with its middleware chain)
 > ```
 >
 > **What it does:** returns `store.dispatch` from the context. It's always the same function, so using it never
 > causes a re-render.
+>
+> **Newer shortcut for typed hooks:** react-redux 9.1+ also offers `useSelector.withTypes<RootState>()` and
+> `useDispatch.withTypes<AppDispatch>()`, which return the same typed hooks as our step 08.2.
 
 ### Build step 08.9: switch to the real library
 
-In `src/app/redux-bindings.js`, replace:
+In `src/app/redux-bindings.ts`, replace:
 
-```js
-export { Provider, useSelector, useDispatch } from '../from-scratch/reactRedux.jsx';
+```ts
+import { Provider, useDispatch, useSelector } from '../from-scratch/reactRedux';
 ```
 
 with:
 
-```js
-export { Provider, useSelector, useDispatch } from 'react-redux';
+```ts
+import { Provider, useDispatch, useSelector } from 'react-redux';
 ```
 
-No component changes: they import from `redux-bindings.js`, and the real functions have the same names and
-arguments.
+No component changes: they import from `redux-bindings.ts`, and the real functions have the same names, arguments
+and types.
 
 ### You may meet `connect`
 
@@ -429,20 +469,20 @@ and the footer: that is global state.
 
 ## Build step 08.10: the demo
 
-Open `demos/08-react-redux.jsx`. Replace the placeholder `🧩 08.10` with:
+Open `demos/08-react-redux.tsx`. Replace the placeholder `🧩 08.10` with:
 
-```jsx
+```tsx
 // Lecture 08 demo: the React app, connected with react-redux.
-import { rootElement, find, findAll, typeText, pressEnter, click, inAct, printScreen } from '../src/debug/testDom.js';
-import { renderApp } from '../src/main.jsx';
-import { store } from '../src/app/store.js';
+import { rootElement, find, findAll, typeText, pressEnter, click, inAct, printScreen } from '../src/debug/testDom';
+import { renderApp } from '../src/main';
+import { store } from '../src/app/store';
 
 console.log('— 1. First render —');
 await inAct(() => renderApp(rootElement));
 printScreen();
 
 console.log('\n— 2. Typing: component state, only Header re-renders —');
-const input = find('input');
+const input = find<HTMLInputElement>('input');
 await typeText(input, 'Learn Redux');
 
 console.log('\n— 3. Enter: dispatch → reducer → the components whose selected value changed re-render —');
@@ -459,7 +499,7 @@ console.log('\n— 5. A filters action: no component selected the filters —');
 await inAct(() => store.dispatch({ type: 'filters/statusFilterChanged', payload: 'active' }));
 ```
 
-`inAct(work)` (from `testDom.js`) runs `work` and then waits until React has finished all the re-renders it
+`inAct(work)` (from `testDom.ts`) runs `work` and then waits until React has finished all the re-renders it
 caused; the helpers `typeText`, `pressEnter` and `click` use it too. Without it, the demo could print the screen
 before React has updated it.
 
@@ -547,27 +587,28 @@ Walk-through:
 ```text
 <Provider store>                      context: every component below can reach the store
   <App>
-    <Header>        useState(text)    useDispatch() ──────────────► dispatch(todoAdded)
-    <TodoList>      useSelector(selectTodos) ◄─┐                          │
-      <TodoListItem todo>  useDispatch()       │                    logger → reducer → new state
-    <Footer>        useSelector(selectRemainingCount) ◄─┐                  │
-                                               │        │           store notifies subscribers
-                                               └────────┴── each selector runs again:
-                                                            different (!==) → re-render that component
-                                                            same            → nothing
+    <Header>        useState(text)    useAppDispatch() ───────────► dispatch(todoAdded)   (checked: RootAction)
+    <TodoList>      useAppSelector(selectTodos) ◄─┐                       │
+      <TodoListItem todo>  useAppDispatch()       │                 logger → reducer → new state
+    <Footer>        useAppSelector(selectRemainingCount) ◄─┐              │
+                                                  │        │        store notifies subscribers
+                                                  └────────┴── each selector runs again:
+                                                               different (!==) → re-render that component
+                                                               same            → nothing
 ```
 
 ## Summary
 
 | Term | What it is, in one line |
 |---|---|
-| **JSX / tsx** | HTML-like tags in JavaScript / the tool that translates them so Node can run them |
+| **TSX / tsx** | JSX in TypeScript files (`.tsx`) / the tool that translates it so Node can run it |
 | **re-render** | React calling a component again: own state changed, parent re-rendered, or subscribed data changed |
 | **React context** | a value made available to all components below a provider, without props |
 | **`useSyncExternalStore`** | React's hook to subscribe a component to outside data; re-renders when the snapshot changes |
 | **`Provider`** | puts the Redux store into context for the whole app |
 | **`useSelector`** | runs a selector on the state; re-renders the component when the result changes (`===`) |
 | **`useDispatch`** | returns the store's `dispatch` |
+| **typed hooks** | `useAppSelector` / `useAppDispatch`: the same hooks, declared with `RootState` / `AppDispatch` |
 | **component state vs global state** | data only one component uses stays in `useState`; data the app shares goes in Redux |
 
 **Next lecture:** [09-async-logic-and-thunks](09-async-logic-and-thunks.md): the todos now come from a server, and

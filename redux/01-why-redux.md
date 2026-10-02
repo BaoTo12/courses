@@ -3,21 +3,22 @@
 > **By the end you can:** explain what "state" and "view" are; show, with running code, how copies of the same data
 > get out of sync; describe the one-way data flow loop; say when Redux is worth using and when it isn't.
 > **New terms in this lesson:** state, view, event, one-way data flow, global state, single source of truth
-> **You should already know:** JavaScript (objects, arrays, functions, arrow functions, modules), and how to run a
-> script with Node.
-> **Project files you fill in:** `demos/01-why-redux.mjs` (🧩 01.1)
+> **You should already know:** TypeScript basics (types, interfaces, union types, functions, modules), and how to
+> run a command with Node.
+> **Project files you fill in:** `demos/01-why-redux.ts` (🧩 01.1)
 
 ## 0. The course project
 
 All the code of this course lives in ONE small project: [project/](project/). It is a **todo app**: a list of
-things to do, where you can add a todo, tick it as done, give it a color, delete it, and filter the list.
+things to do, where you can add a todo, tick it as done, give it a color, delete it, and filter the list. It is
+written in **TypeScript**, in strict mode.
 
 The project is a **skeleton**. Every file already exists, but the parts this course teaches are **placeholders**
 marked with 🧩 and a number:
 
-```js
-// 🧩 03.2: the todos reducer (lecture 03, step 2). Replace this function.
-export function todosReducer(state, action) {
+```ts
+// 🧩 03.2: the reducer (lecture 03, step 2). Replace this function.
+export function todosReducer(state: unknown, action: unknown): unknown {
   throw new Error('🧩 Not written yet: lecture 03, step 2');
 }
 ```
@@ -32,19 +33,21 @@ npm run lesson 01
 ```
 
 `npm install` is needed only once. It installs the libraries the course uses: `redux`, `react`, `react-dom`,
-`react-redux`, `redux-thunk` and `reselect`, plus `jsdom` and `tsx`, two tools that let the React part of the app
-run inside Node (no browser needed). Lecture 07 explains them when we first need them.
+`react-redux`, `redux-thunk` and `reselect`, plus three tools:
+- `typescript`, which checks the types: run `npm run typecheck` whenever you like;
+- `tsx`, which runs TypeScript files directly with Node (it removes the types and runs the result);
+- `jsdom`, which lets the React part of the app run inside Node, with no browser (lecture 07).
 
 ## 1. State: what the app remembers right now
 
 Think of any app on your phone. At every moment it remembers some data: which todos exist, which one is done,
 which filter is selected. That data is the app's **state**: everything the app needs to remember *right now*.
 
-```js
+```ts
 const state = { todos: [{ text: 'Learn Redux', completed: false }] };
 ```
 
-That's all it is: normal JavaScript values. The word "right now" matters: the state **changes over time**. When
+That's all it is: normal JavaScript values. The words "right now" matter: the state **changes over time**. When
 the user adds a todo, the state is different afterwards.
 
 ## 2. View: what the user sees, drawn from the state
@@ -52,8 +55,8 @@ the user adds a todo, the state is different afterwards.
 The **view** is what the user sees on the screen. In a well-built app, the view is **computed from the state**:
 give it the same state and it draws the same picture.
 
-```js
-function render() {
+```ts
+function render(): void {
   console.log(state.todos.map((todo) => todo.text).join(', ')); // our "screen" is the console
 }
 ```
@@ -63,14 +66,14 @@ In this lecture the "screen" is just `console.log`. From lecture 07 on, it will 
 ## 3. The problem: copies of the same data get out of sync
 
 A real screen has many parts: a list, a footer that says "2 items left", a header with a counter… Each part needs
-some of the same data. The easy way is to let each part keep **its own copy**:
+some of the same data. The easy way is to let each part keep **its own copy**.
 
 ### Build step 01.1: the lecture's demo, part A
 
-Open `demos/01-why-redux.mjs`. Replace the placeholder `🧩 01.1` with the code below. This step has two parts (A
-and B); paste both, one after the other. Here is part A:
+Open `demos/01-why-redux.ts`. Replace the placeholder `🧩 01.1` with the code below. This step has two parts (A and
+B); paste both, one after the other. Here is part A:
 
-```js
+```ts
 // Lecture 01 demo: the problem Redux solves, and the idea behind it.
 
 // ── Part A: every part of the screen keeps its OWN copy of the data ──
@@ -89,7 +92,7 @@ const footerView = {
   },
 };
 
-function onAddClicked(text) {
+function onAddClicked(text: string): void {
   console.log(`⚡ user adds "${text}"`);
   listView.todos.push(text); // the list's copy is updated…
   listView.render();
@@ -101,10 +104,12 @@ onAddClicked('Walk the dog');
 
 What each part does:
 - `listView` and `footerView` are two parts of the screen. Each one stores the data it shows: the list stores the
-  todo texts, the footer stores a number.
+  todo texts, the footer stores a number. TypeScript infers their types from the values (`todos: string[]`,
+  `remaining: number`).
 - `onAddClicked` is what happens when the user adds a todo. It updates the list's copy, then redraws both parts.
 - The bug: the footer's number is a **second copy** of information that is already in the list ("how many todos
-  aren't done"). Nobody remembered to update it.
+  aren't done"). Nobody remembered to update it. TypeScript can't catch this: every line is correctly typed. The
+  bug is in the design.
 
 When you run it (the full output is in "Run it" below), part A prints:
 
@@ -124,7 +129,7 @@ server answered. Events are the only reason the state ever changes. If nothing h
 
 We will describe each event as a small plain object that says what happened:
 
-```js
+```ts
 { type: 'todoAdded', text: 'Walk the dog' }
 ```
 
@@ -162,19 +167,21 @@ The data always travels in the same direction, around a loop. This is called **o
 
 Paste this under part A, in the same file:
 
-```js
+```ts
 // ── Part B: ONE state, every view reads from it, ONE place changes it ──
 console.log('\n— Part B: one state, one-way data flow —');
 
-let state = { todos: [{ text: 'Learn Redux', completed: false }] };
+type AppEvent = { type: 'todoAdded'; text: string } | { type: 'todoCompleted'; index: number };
 
-function render() {
+const state = { todos: [{ text: 'Learn Redux', completed: false }] };
+
+function render(): void {
   const remaining = state.todos.filter((todo) => !todo.completed).length;
   console.log(`  🖥  list:   ${state.todos.map((todo) => todo.text).join(', ')}`);
   console.log(`  🖥  footer: ${remaining} item(s) left`);
 }
 
-function handle(event) {
+function handle(event: AppEvent): void {
   console.log(`⚡ event: ${JSON.stringify(event)}`);
   if (event.type === 'todoAdded') {
     state.todos.push({ text: event.text, completed: false });
@@ -191,6 +198,9 @@ handle({ type: 'todoCompleted', index: 0 });
 ```
 
 What each part does:
+- `AppEvent` is a **union type**: an event is either `{ type: 'todoAdded', text }` or
+  `{ type: 'todoCompleted', index }`. Inside `if (event.type === 'todoAdded')`, TypeScript knows the event has a
+  `text`; inside the other `if`, an `index`. Lecture 03 explains how it knows; it's the backbone of typing Redux.
 - `state` is the **one** place where the todos live. The footer no longer stores a number: `render` **computes**
   "items left" from the state each time, so it can't be out of date.
 - `handle(event)` is the only code that changes the state. It reads `event.type` to know what happened.
@@ -230,6 +240,8 @@ Why such strict rules? Because they buy you things:
 - **One place to look.** Every part of the app reads the same data.
 - **Tooling.** Because every change is a plain object passing through one function, a tool can record every event,
   show the state before and after, and even replay them. (The Redux DevTools browser extension does this.)
+- **Types.** With TypeScript, the list of possible events is a union type: a misspelled event, or an event with a
+  missing detail, is an error before the code even runs.
 
 And they cost something:
 
@@ -253,7 +265,7 @@ This course uses these libraries; each gets its own lecture:
 
 | Library | What it does for you | Lecture |
 |---|---|---|
-| `redux` | the core: the store that holds the state, and a few helpers | 03–06 |
+| `redux` | the core: the store that holds the state, a few helpers, and their TypeScript types | 03–06 |
 | `react-redux` | connects Redux to React components | 08 |
 | `redux-thunk` | lets you write logic that waits (e.g. for a server) | 09 |
 | `reselect` | makes "compute something from the state" fast | 10 |
@@ -267,7 +279,7 @@ This course teaches what's underneath, by hand, so that the Redux Toolkit course
 npm run lesson 01
 ```
 
-Real output:
+Expected output (not run):
 
 ```text
 — Part A: every view keeps its own copy —
@@ -289,7 +301,8 @@ Real output:
 Walk-through:
 - **Part A, the wrong footer.** `onAddClicked` pushed into `listView.todos` but nobody updated
   `footerView.remaining`. The two copies disagree: 2 todos, "1 item left".
-- **Part B, line 1–2.** The first `render()` draws the starting state: one todo, not completed → "1 item left".
+- **Part B, the first two lines.** The first `render()` draws the starting state: one todo, not completed → "1 item
+  left".
 - **`⚡ event: todoAdded`.** `handle` pushes the new todo into the one `state`, then `render()` recomputes
   everything: 2 todos, both not completed → "2 item(s) left". The footer is right, and nobody had to remember to
   update it.

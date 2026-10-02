@@ -38,6 +38,21 @@ The examples on Redux only illustrate the STYLE. Apply the same style to whateve
 3. **The mode** (see "Two modes"): roadmap + skeleton + lessons on demand by default; the full course only when the
    user asks for it ("full course", "write everything", "generate the courses").
 
+## Always TypeScript
+
+All code in a course is **TypeScript**, in strict mode: the project, the from-scratch builds, the demos, even the
+given infrastructure (`.ts` / `.tsx`, run with `tsx`, type-checked with `tsc --noEmit`). Only use another language
+when the topic itself is that language.
+
+- Types are taught like any other term: a type feature the reader may not know (a discriminated union, a mapped
+  type, `ReturnType`, `as const`, generics with constraints…) gets a one-line explanation the first time it appears.
+- The topic's own types (e.g. Redux's `RootState`, `AppDispatch`, `Middleware`) are rungs of the concept ladder,
+  defined when first needed, with an API card when they come from a library.
+- Prefer types that teach: let TypeScript catch the mistakes the lesson warns about (a misspelled action type, a
+  missing case), and show that in the lesson.
+- Keep from-scratch versions of library functions readably typed. Simple generics, or `any` with a comment saying
+  why, beat an exact but unreadable type.
+
 ## The course project: a skeleton the reader fills in
 
 Every course has exactly **one** project, small but complete: just big enough that every concept of the course has
@@ -49,9 +64,9 @@ it; the lessons are connected because they build the same project.
   runner) is given complete, with a one-line comment saying what it is.
 - **Placeholder convention.** Each placeholder names the lesson and step that fills it:
 
-  ```js
+  ```ts
   // 🧩 03.2 — the todos reducer (lesson 03, step 2). Replace this function.
-  export function todosReducer(state, action) {
+  export function todosReducer(state: unknown, action: unknown): unknown {
     throw new Error('🧩 Not written yet: lesson 03, step 2');
   }
   ```
@@ -134,7 +149,7 @@ Typing `{ type: 'cityChanged', city: 'Hue' }` by hand everywhere is tiring, and 
 reducer silently ignores the note. So we write a small function that **builds the action object**. That function is
 called an **action creator**:
 
-```js
+```ts
 const cityChanged = (city) => ({ type: 'cityChanged', city });
 
 cityChanged('Hue');   // returns { type: 'cityChanged', city: 'Hue' }
@@ -144,7 +159,7 @@ What matters here:
 - An action creator **only returns an object**. Calling `cityChanged('Hue')` changes nothing in the store.
 - The change happens only when that object goes into `dispatch` (step 5):
 
-```js
+```ts
 store.dispatch(cityChanged('Hue'));
 // same as: store.dispatch({ type: 'cityChanged', city: 'Hue' })
 ```
@@ -173,7 +188,7 @@ What "naive first, then why it isn't enough" looks like:
 ````markdown
 ### Naive version: in the click handler
 
-```js
+```ts
 async function onCityPicked(city) {
   store.dispatch(cityChanged(city));
   const forecast = await fakeApi.getForecast(city);   // wait for the server
@@ -205,10 +220,10 @@ exactly which file and which 🧩 placeholder to replace, with the complete code
 ````markdown
 ### Build step 03.2: the todos reducer
 
-Open `src/todos/todosReducer.js`. Replace the placeholder `🧩 03.2` (the whole `todosReducer` function) with:
+Open `src/todos/todosReducer.ts`. Replace the placeholder `🧩 03.2` (the whole `todosReducer` function) with:
 
-```js
-export function todosReducer(state = initialState, action) {
+```ts
+export function todosReducer(state: TodosState = initialState, action: TodosAction): TodosState {
   switch (action.type) {
     case 'todos/todoAdded':
       return [...state, action.payload];                                // a NEW array: old items + the new one
@@ -236,11 +251,11 @@ What each part does:
 
 ### Rule 4: every lesson ends by running the project, and the output is real
 
-- The last build step writes the lesson's demo (`demos/NN-<slug>.mjs`), a short script that uses what the lesson
+- The last build step writes the lesson's demo (`demos/NN-<slug>.ts`), a short script that uses what the lesson
   built. **Instrument it** with log lines that name what is happening, indented by call depth, so the output itself
   shows the flow:
 
-  ```js
+  ```ts
   console.log(`    🔧 thunk middleware: it's a FUNCTION → calling it (it does NOT go to next)`);
   console.log(`      🧮 reducer runs for ${action.type}`);
   console.log(`       🖥  screen: ${s.city} — ${s.status}`);
@@ -313,7 +328,7 @@ When the topic is a flow (a request, an event, a dispatch, a build pipeline), sh
 > **By the end you can:** 2–4 concrete outcomes ("explain why a reducer must not mutate", "write a slice reducer")
 > **New terms in this lesson:** term A, term B, term C
 > **You should already know:** term X ([01-…](01-….md)), term Y ([02-…](02-….md))
-> **Project files you fill in:** `src/…` (🧩 NN.1–NN.4), `demos/NN-<slug>.mjs`
+> **Project files you fill in:** `src/…` (🧩 NN.1–NN.4), `demos/NN-<slug>.ts`
 
 ## 1. <first concept>
 (problem → idea → build step(s) in the project → run by hand → the real thing)

@@ -1,29 +1,29 @@
 # Lecture 10. Action creators and memoized selectors
 
-> **By the end you can:** write action creators for every action; explain why a selector that returns a new array
-> causes extra re-renders; build a memoized selector yourself; use Reselect's `createSelector`; make each list item
-> re-render only when its own todo changes.
+> **By the end you can:** write typed action creators for every action; explain why a selector that returns a new
+> array causes extra re-renders; build a memoized selector yourself; use Reselect's `createSelector`; make each list
+> item re-render only when its own todo changes.
 > **New terms in this lesson:** action creator, memoization, memoized selector, input selector, result function,
 > `createSelector`, `shallowEqual`
 > **You should already know:** selector, derived data ([07](07-redux-and-a-ui.md), [04](04-combining-reducers.md));
-> `useSelector` and when components re-render ([08](08-react-redux.md)); thunks ([09](09-async-logic-and-thunks.md))
-> **Project files you fill in:** `src/features/todos/todosSlice.js` (🧩 10.1, 🧩 10.4 + changes),
-> `src/features/filters/filtersSlice.js` (🧩 10.2), `src/from-scratch/createSelector.js` (🧩 10.3),
-> `src/app/redux-bindings.js`, `src/ui/TodoList.jsx`, `TodoListItem.jsx`, `Footer.jsx` (changes),
-> `demos/10-action-creators-and-selectors.jsx` (🧩 10.8)
+> `useAppSelector` and when components re-render ([08](08-react-redux.md)); thunks ([09](09-async-logic-and-thunks.md))
+> **Project files you fill in:** `src/features/todos/todosSlice.ts` (🧩 10.1, 🧩 10.4 + changes),
+> `src/features/filters/filtersSlice.ts` (🧩 10.2), `src/from-scratch/createSelector.ts` (🧩 10.3),
+> `src/app/redux-bindings.ts`, `src/ui/TodoList.tsx`, `TodoListItem.tsx`, `Footer.tsx` (changes),
+> `demos/10-action-creators-and-selectors.tsx` (🧩 10.8)
 
 ## 1. Action creator: a function that builds the action
 
 The project writes action objects by hand in many places: `{ type: 'todos/todoToggled', payload: todo.id }` in a
-component, `{ type: 'todos/todoAdded', payload: response.todo }` in a thunk. One typo in a type string
-(`'todos/todoToggle'`) and the reducer silently ignores the action: no error, nothing happens. And every place must
-remember the payload's exact shape (`{ todoId, color }` or `{ color, todoId }`?).
+component, `{ type: 'todos/todoAdded', payload: response.todo }` in a thunk. TypeScript already catches typos in
+them, but every place must still spell out the type string and know the payload's exact shape (`{ todoId, color }`
+or `{ color, todoId }`?). If a payload's shape changes, every one of those places changes.
 
 So we write, once, next to the reducer, a small function that **builds the action object**. That function is an
 **action creator**:
 
-```js
-export const todoToggled = (todoId) => ({ type: 'todos/todoToggled', payload: todoId });
+```ts
+export const todoToggled = (todoId: number): TodosAction => ({ type: 'todos/todoToggled', payload: todoId });
 
 todoToggled(2);   // returns { type: 'todos/todoToggled', payload: 2 }
 ```
@@ -32,6 +32,7 @@ What matters here:
 - An action creator **only returns an object**. Calling `todoToggled(2)` changes nothing in the store.
 - The change happens only when that object is dispatched: `dispatch(todoToggled(2))`. JavaScript runs
   `todoToggled(2)` first, then `dispatch` receives the object.
+- The return type `: TodosAction` makes TypeScript check the object against the union, once, here.
 - A thunk creator (lecture 09) has the same role for thunks: it returns a function instead of an object.
 
 By convention, the action creator has the same name as the event in the type: `'todos/todoToggled'` →
@@ -39,15 +40,18 @@ By convention, the action creator has the same name as the event in the type: `'
 
 ### Build step 10.1: the todos action creators
 
-Open `src/features/todos/todosSlice.js`. Replace the placeholder `🧩 10.1` with:
+Open `src/features/todos/todosSlice.ts`. Replace the placeholder `🧩 10.1` with:
 
-```js
-export const todoAdded = (todo) => ({ type: 'todos/todoAdded', payload: todo });
-export const todoToggled = (todoId) => ({ type: 'todos/todoToggled', payload: todoId });
-export const colorSelected = (todoId, color) => ({ type: 'todos/colorSelected', payload: { todoId, color } });
-export const todoDeleted = (todoId) => ({ type: 'todos/todoDeleted', payload: todoId });
-export const completedCleared = () => ({ type: 'todos/completedCleared' });
-export const todosLoaded = (todos) => ({ type: 'todos/todosLoaded', payload: todos });
+```ts
+export const todoAdded = (todo: Todo): TodosAction => ({ type: 'todos/todoAdded', payload: todo });
+export const todoToggled = (todoId: number): TodosAction => ({ type: 'todos/todoToggled', payload: todoId });
+export const colorSelected = (todoId: number, color: string): TodosAction => ({
+  type: 'todos/colorSelected',
+  payload: { todoId, color },
+});
+export const todoDeleted = (todoId: number): TodosAction => ({ type: 'todos/todoDeleted', payload: todoId });
+export const completedCleared = (): TodosAction => ({ type: 'todos/completedCleared' });
+export const todosLoaded = (todos: Todo[]): TodosAction => ({ type: 'todos/todosLoaded', payload: todos });
 ```
 
 `colorSelected(todoId, color)` takes two normal arguments and builds the `{ todoId, color }` payload itself: callers
@@ -55,41 +59,50 @@ can't get the shape wrong.
 
 Then use them in the thunks of the same file. In `fetchTodos`, replace:
 
-```js
+```ts
   dispatch({ type: 'todos/todosLoaded', payload: response.todos });
 ```
 
 with:
 
-```js
+```ts
   dispatch(todosLoaded(response.todos));
 ```
 
 In `saveNewTodo`, replace:
 
-```js
+```ts
     dispatch({ type: 'todos/todoAdded', payload: response.todo });
 ```
 
 with:
 
-```js
+```ts
     dispatch(todoAdded(response.todo));
 ```
 
 ### Build step 10.2: the filters action creators and selectors
 
-Open `src/features/filters/filtersSlice.js`. Replace the placeholder `🧩 10.2` with:
+Open `src/features/filters/filtersSlice.ts`. Add this import at the top:
 
-```js
-export const statusFilterChanged = (status) => ({ type: 'filters/statusFilterChanged', payload: status });
-export const colorFilterChanged = (color, changeType) => ({
+```ts
+import type { RootState } from '../../app/rootReducer';
+```
+
+Then replace the placeholder `🧩 10.2` with:
+
+```ts
+export const statusFilterChanged = (status: StatusFilter): FiltersAction => ({
+  type: 'filters/statusFilterChanged',
+  payload: status,
+});
+export const colorFilterChanged = (color: string, changeType: 'added' | 'removed'): FiltersAction => ({
   type: 'filters/colorFilterChanged',
   payload: { color, changeType },
 });
 
-export const selectStatusFilter = (state) => state.filters.status;
-export const selectColorFilters = (state) => state.filters.colors;
+export const selectStatusFilter = (state: RootState) => state.filters.status;
+export const selectColorFilters = (state: RootState) => state.filters.colors;
 ```
 
 The two selectors give the filters slice its "one way to be read" (lecture 07).
@@ -98,9 +111,9 @@ The two selectors give the filters slice its "one way to be read" (lecture 07).
 
 Now the list should show only the todos that pass the filters. That's derived data, so it's a selector:
 
-```js
+```ts
 // naive version
-export const selectFilteredTodos = (state) =>
+export const selectFilteredTodos = (state: RootState) =>
   selectTodos(state).filter((todo) => /* status and color match */ true);
 ```
 
@@ -128,17 +141,21 @@ otherwise run the result function and remember its result.
 
 ### Build step 10.3: our own `createSelector`
 
-Open `src/from-scratch/createSelector.js`. Replace the placeholder `🧩 10.3` with:
+Open `src/from-scratch/createSelector.ts`. Replace the placeholder `🧩 10.3` with:
 
-```js
+```ts
 // Our own memoized-selector builder (it remembers only the LAST inputs and result).
-export function createSelector(inputSelectors, resultFunc) {
-  let lastInputs = null;
-  let lastResult;
+export function createSelector<Args extends unknown[], Result>(
+  inputSelectors: Array<(...args: Args) => unknown>,
+  resultFunc: (...inputs: any[]) => Result,
+): (...args: Args) => Result {
+  let lastInputs: unknown[] | null = null;
+  let lastResult: Result;
 
-  return function memoizedSelector(...args) {
+  return function memoizedSelector(...args: Args): Result {
     const inputs = inputSelectors.map((select) => select(...args));
-    const sameInputs = lastInputs !== null && inputs.every((value, index) => value === lastInputs[index]);
+    const previous = lastInputs;
+    const sameInputs = previous !== null && inputs.every((value, index) => value === previous[index]);
     if (!sameInputs) {
       lastResult = resultFunc(...inputs);
       lastInputs = inputs;
@@ -151,7 +168,13 @@ export function createSelector(inputSelectors, resultFunc) {
 What each part does:
 - `createSelector([input selectors], resultFunc)` runs once and returns `memoizedSelector`, which remembers
   `lastInputs` and `lastResult` (closures).
+- The types: `Args` is the selectors' parameter list (for us, `[state: RootState]`), `Result` what the result
+  function returns. The memoized selector has the same parameters and returns `Result`. The result function's
+  parameters are `any[]`: typing "the parameters are exactly the input selectors' results, in order" needs advanced
+  tuple types, which Reselect has and our teaching version skips.
 - On each call, `inputs` holds what every input selector returned for these arguments.
+- `previous = lastInputs`: a local copy, so that TypeScript keeps knowing it isn't `null` inside the `every`
+  callback.
 - `sameInputs`: every input is `===` to the one from the last call. This is cheap: a few `===`.
 - Only when an input changed does the result function run; its result is remembered and returned.
 
@@ -173,9 +196,9 @@ The memoization works **because reducers never mutate**: "same todos reference" 
 >
 > ```ts
 > function createSelector(
->   inputSelectors: Array<(state, ...args) => any>,     // pick the values the computation needs
->   resultFunc: (...inputResults) => Result,            // compute; runs only when an input changed
-> ): (state, ...args) => Result;                        // the memoized selector
+>   inputSelectors: [...InputSelectors],                  // pick the values the computation needs
+>   resultFunc: (...inputResults: InputResults) => Result, // its parameters are typed from the input selectors
+> ): (state, ...args) => Result;                          // the memoized selector
 > ```
 >
 > **What it does, step by step, on each call:**
@@ -185,9 +208,10 @@ The memoization works **because reducers never mutate**: "same todos reference" 
 > 3. If the input results are the same (`===`) as an earlier set of input results, it returns that earlier result.
 > 4. Otherwise it runs `resultFunc(...inputResults)`, remembers and returns the result.
 >
-> **Difference from ours:** our version remembers only the **last** inputs. Reselect 5 remembers **every**
-> combination of inputs it has seen (stored in `WeakMap`s, so entries for objects that are no longer used anywhere
-> are cleaned up automatically by JavaScript). The demo shows when this matters.
+> **Differences from ours:** Reselect types the result function's parameters exactly (in our project, `todos` is
+> inferred as `TodosState`, `status` as `StatusFilter`…). And our version remembers only the **last** inputs;
+> Reselect 5 remembers **every** combination of inputs it has seen (stored in `WeakMap`s, so entries for objects that
+> are no longer used anywhere are cleaned up automatically by JavaScript). The demo shows when this matters.
 >
 > **Development checks:** the first time a selector runs, Reselect runs the input selectors twice and warns if
 > they return different references: an input selector must not create new objects, or the memoization never hits.
@@ -199,25 +223,25 @@ The memoization works **because reducers never mutate**: "same todos reference" 
 
 ### Build step 10.4: the filtered-list selectors
 
-In `src/features/todos/todosSlice.js`, add these imports at the top:
+In `src/features/todos/todosSlice.ts`, add these imports at the top:
 
-```js
+```ts
 import { createSelector } from 'reselect';
-import { StatusFilters, selectStatusFilter, selectColorFilters } from '../filters/filtersSlice.js';
+import { selectColorFilters, selectStatusFilter } from '../filters/filtersSlice';
 ```
 
 Then replace the placeholder `🧩 10.4` with:
 
-```js
-export const selectTodoById = (state, todoId) => selectTodos(state).find((todo) => todo.id === todoId);
+```ts
+export const selectTodoById = (state: RootState, todoId: number) =>
+  selectTodos(state).find((todo) => todo.id === todoId);
 
 export const selectFilteredTodos = createSelector(
   [selectTodos, selectStatusFilter, selectColorFilters],
   (todos, status, colors) => {
     console.log('      🧠 selectFilteredTodos recomputes');
     return todos.filter((todo) => {
-      const statusMatches =
-        status === StatusFilters.All || (status === StatusFilters.Completed ? todo.completed : !todo.completed);
+      const statusMatches = status === 'all' || (status === 'completed' ? todo.completed : !todo.completed);
       const colorMatches = colors.length === 0 || colors.includes(todo.color);
       return statusMatches && colorMatches;
     });
@@ -229,13 +253,17 @@ export const selectFilteredTodoIds = createSelector([selectFilteredTodos], (todo
 
 What each part does:
 - `selectTodoById(state, todoId)`: a selector with an extra argument. It returns the todo object **from the
-  state** (not a copy), so it's `===` to last time as long as that todo didn't change.
+  state** (not a copy), so it's `===` to last time as long as that todo didn't change. Its return type is
+  `Todo | undefined`: `find` may find nothing (for example, right after the todo was deleted).
 - `selectFilteredTodos`: three input selectors (the todos, the status, the colors); the result function filters.
+  Its parameters need no annotations: Reselect infers `todos: TodosState`, `status: StatusFilter`,
+  `colors: string[]` from the input selectors.
   - `statusMatches`: "all" lets everything through; "completed" keeps completed todos; "active" keeps the others.
+    (Comparing `status` with `'actve'` would be a compile error: it's not a `StatusFilter`.)
   - `colorMatches`: no color selected lets everything through; otherwise the todo's color must be in the list.
   - The `🧠` line shows each time the result function really runs.
 - `selectFilteredTodoIds`: a memoized selector whose input is **another memoized selector**. When the filtered
-  list is the same array, the ids array is the same array too.
+  list is the same array, the ids array is the same array too. Its type: `(state: RootState) => number[]`.
 
 ## 5. One more problem: the same ids in a new array
 
@@ -257,32 +285,36 @@ of "same reference". `useSelector` accepts one as its second argument.
 > `===`. It looks one level deep only (hence "shallow").
 >
 > ```ts
-> function shallowEqual(a: unknown, b: unknown): boolean;
+> function shallowEqual(a: any, b: any): boolean;
 > // shallowEqual([1, 2], [1, 2]) → true      shallowEqual([{…}], [{…}]) → true only if the SAME objects
 > ```
 >
-> **How it's used:** `useSelector(selectFilteredTodoIds, shallowEqual)`: after a dispatch, `TodoList` re-renders only
-> if the list of ids is different, not merely a new array.
+> **How it's used:** `useAppSelector(selectFilteredTodoIds, shallowEqual)`: after a dispatch, `TodoList` re-renders
+> only if the list of ids is different, not merely a new array.
 
 ### Build step 10.5: `shallowEqual` in the bindings
 
-In `src/app/redux-bindings.js`, replace the line with:
+In `src/app/redux-bindings.ts`, replace the import line and the `export { Provider };` line with:
 
-```js
-export { Provider, useSelector, useDispatch, shallowEqual } from 'react-redux';
+```ts
+import { Provider, shallowEqual, useDispatch, useSelector } from 'react-redux';
+```
+
+```ts
+export { Provider, shallowEqual };
 ```
 
 ### Build step 10.6: `TodoList` selects ids; `TodoListItem` selects its own todo
 
-Replace the whole content of `src/ui/TodoList.jsx` with:
+Replace the whole content of `src/ui/TodoList.tsx` with:
 
-```jsx
-import { shallowEqual, useSelector } from '../app/redux-bindings.js';
-import { selectFilteredTodoIds } from '../features/todos/todosSlice.js';
-import { TodoListItem } from './TodoListItem.jsx';
+```tsx
+import { shallowEqual, useAppSelector } from '../app/redux-bindings';
+import { selectFilteredTodoIds } from '../features/todos/todosSlice';
+import { TodoListItem } from './TodoListItem';
 
 export function TodoList() {
-  const todoIds = useSelector(selectFilteredTodoIds, shallowEqual);
+  const todoIds = useAppSelector(selectFilteredTodoIds, shallowEqual);
   console.log('        🖼  TodoList renders');
 
   return (
@@ -295,17 +327,18 @@ export function TodoList() {
 }
 ```
 
-Replace the whole content of `src/ui/TodoListItem.jsx` with:
+Replace the whole content of `src/ui/TodoListItem.tsx` with:
 
-```jsx
-import { useDispatch, useSelector } from '../app/redux-bindings.js';
-import { colorSelected, selectTodoById, todoDeleted, todoToggled } from '../features/todos/todosSlice.js';
+```tsx
+import { useAppDispatch, useAppSelector } from '../app/redux-bindings';
+import { colorSelected, selectTodoById, todoDeleted, todoToggled } from '../features/todos/todosSlice';
 
 const COLORS = ['green', 'blue', 'red'];
 
-export function TodoListItem({ id }) {
-  const todo = useSelector((state) => selectTodoById(state, id));
-  const dispatch = useDispatch();
+export function TodoListItem({ id }: { id: number }) {
+  const todo = useAppSelector((state) => selectTodoById(state, id));
+  const dispatch = useAppDispatch();
+  if (!todo) return null; // the todo was just deleted: draw nothing
   console.log(`        🖼  TodoListItem #${todo.id} renders`);
 
   return (
@@ -329,30 +362,34 @@ export function TodoListItem({ id }) {
 What changed:
 - `TodoList` passes only an `id` to each item. Since it re-renders only when the list of ids changes, ticking a
   todo no longer re-renders it.
-- `TodoListItem` receives `id` and selects its own todo with `selectTodoById`. The selector is written inline,
-  `(state) => selectTodoById(state, id)`, because it needs the `id` prop. It returns the todo object from the state,
-  so the item re-renders only when **that** todo object is replaced.
+- `TodoListItem` receives `id` (typed `{ id: number }`) and selects its own todo with `selectTodoById`. The selector
+  is written inline, `(state) => selectTodoById(state, id)`, because it needs the `id` prop; `state` is a
+  `RootState` thanks to the typed hook. It returns the todo object from the state, so the item re-renders only when
+  **that** todo object is replaced.
+- `todo` may be `undefined` (`find`'s result), so TypeScript makes us handle it: `if (!todo) return null`. Both
+  hooks are called **before** this `return`: React requires every hook to be called on every render, in the same
+  order.
 - The handlers use action creators instead of hand-written objects.
 
 ### Build step 10.7: `Footer` with the status filter
 
-Replace the whole content of `src/ui/Footer.jsx` with:
+Replace the whole content of `src/ui/Footer.tsx` with:
 
-```jsx
-import { useDispatch, useSelector } from '../app/redux-bindings.js';
-import { completedCleared, selectRemainingCount } from '../features/todos/todosSlice.js';
-import { StatusFilters, selectStatusFilter, statusFilterChanged } from '../features/filters/filtersSlice.js';
+```tsx
+import { useAppDispatch, useAppSelector } from '../app/redux-bindings';
+import { completedCleared, selectRemainingCount } from '../features/todos/todosSlice';
+import { selectStatusFilter, statusFilterChanged, statusFilters } from '../features/filters/filtersSlice';
 
 export function Footer() {
-  const remaining = useSelector(selectRemainingCount);
-  const status = useSelector(selectStatusFilter);
-  const dispatch = useDispatch();
+  const remaining = useAppSelector(selectRemainingCount);
+  const status = useAppSelector(selectStatusFilter);
+  const dispatch = useAppDispatch();
   console.log('        🖼  Footer renders');
 
   return (
     <footer>
       {remaining} item(s) left{' '}
-      {Object.values(StatusFilters).map((value) => (
+      {statusFilters.map((value) => (
         <button key={value} onClick={() => dispatch(statusFilterChanged(value))}>
           {value === status ? `• ${value}` : value}
         </button>
@@ -363,34 +400,35 @@ export function Footer() {
 }
 ```
 
-One button per status filter. The selected one is marked with `•`. A component can call `useSelector` several
-times: it re-renders when **any** of its selected values changes.
+One button per status filter (`statusFilters` from lecture 04). The selected one is marked with `•`. A component
+can call `useAppSelector` several times: it re-renders when **any** of its selected values changes.
 
 ## Build step 10.8: the demo
 
-Open `demos/10-action-creators-and-selectors.jsx`. Replace the placeholder `🧩 10.8` with:
+Open `demos/10-action-creators-and-selectors.tsx`. Replace the placeholder `🧩 10.8` with:
 
-```jsx
+```tsx
 // Lecture 10 demo: action creators, memoized selectors, and who re-renders.
-import { rootElement, findAll, click, choose, wait, inAct, printScreen } from '../src/debug/testDom.js';
-import { createSelector as ourCreateSelector } from '../src/from-scratch/createSelector.js';
-import { todoToggled, colorSelected } from '../src/features/todos/todosSlice.js';
-import { renderApp } from '../src/main.jsx';
+import { rootElement, findAll, click, choose, wait, inAct, printScreen } from '../src/debug/testDom';
+import { createSelector as ourCreateSelector } from '../src/from-scratch/createSelector';
+import { todoToggled, colorSelected } from '../src/features/todos/todosSlice';
+import { renderApp } from '../src/main';
 
 console.log('— 1. Action creators only build objects —');
 console.log('  todoToggled(2) →', JSON.stringify(todoToggled(2)));
 console.log('  colorSelected(1, "red") →', JSON.stringify(colorSelected(1, 'red')));
 
 console.log('\n— 2. Our memoized selector —');
-const selectDoneTexts = ourCreateSelector([(state) => state.todos], (todos) => {
+type DemoState = { todos: { text: string; completed: boolean }[] };
+const selectDoneTexts = ourCreateSelector([(state: DemoState) => state.todos], (todos: DemoState['todos']) => {
   console.log('    🧠 result function runs');
   return todos.filter((todo) => todo.completed).map((todo) => todo.text);
 });
-const state1 = { todos: [{ text: 'Learn Redux', completed: true }] };
+const state1: DemoState = { todos: [{ text: 'Learn Redux', completed: true }] };
 const first = selectDoneTexts(state1);
 const second = selectDoneTexts(state1);
 console.log('  same state twice → same array?', first === second);
-const state2 = { todos: [...state1.todos, { text: 'Walk the dog', completed: true }] };
+const state2: DemoState = { todos: [...state1.todos, { text: 'Walk the dog', completed: true }] };
 console.log('  new todos array → new result:', selectDoneTexts(state2));
 
 console.log('\n— 3. The app loads —');
@@ -402,10 +440,10 @@ console.log('\n— 4. Tick todo #2 —');
 await click(findAll('li input[type=checkbox]')[1]);
 
 console.log('\n— 5. Choose a color for todo #1 —');
-await choose(findAll('li select')[0], 'red');
+await choose(findAll<HTMLSelectElement>('li select')[0], 'red');
 
 console.log('\n— 6. Filter "active" —');
-const filterButton = (label) => findAll('footer button').find((button) => button.textContent.endsWith(label));
+const filterButton = (label: string) => findAll('footer button').find((button) => button.textContent?.endsWith(label))!;
 await click(filterButton('active'));
 printScreen();
 
@@ -414,7 +452,9 @@ await click(filterButton('all'));
 printScreen();
 ```
 
-`choose(select, value)` (from `testDom.js`) picks an option in a dropdown, like a user would.
+`choose(select, value)` (from `testDom.ts`) picks an option in a dropdown, like a user would. `DemoState['todos']`
+is an indexed access type: "the type of the `todos` field of `DemoState`". The `!` after `find(…)` tells
+TypeScript the button exists (`find` may return `undefined`).
 
 ## Run it
 
@@ -541,7 +581,7 @@ dispatch(todoToggled(2)) → reducer → new todos array → store notifies subs
 | **memoized selector** | a selector that returns the same result (same reference) when its inputs didn't change |
 | **input selector** | a cheap selector that picks the values the computation needs, returning existing references |
 | **result function** | the computation of a memoized selector; runs only when an input changed |
-| **`createSelector`** | Reselect's builder for memoized selectors; remembers every input combination (Reselect 5) |
+| **`createSelector`** | Reselect's builder for memoized selectors; infers types; remembers every input combination |
 | **`shallowEqual`** | compares one level deep (same keys, `===` values); `useSelector`'s optional comparison |
 
 **Next lecture:** [11-loading-state-and-normalized-data](11-loading-state-and-normalized-data.md): showing that
