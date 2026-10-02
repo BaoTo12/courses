@@ -258,3 +258,35 @@ Runtime CSS generation · class name hashing · transient props · component ide
 - **Implementation:** A retry-once interceptor for idempotent GETs on network errors only (explain why not for POST).
 
 **Checkpoint:** `s13-end`
+
+---
+
+## S13B · React + TypeScript for Enterprise Codebases (added 2026-09-30)
+
+**Project feature:** generic `SelectField<T>` (with `isOneOf` and `NoInfer`) replaces TaskForm's two selects; `Button` accepts every native prop including `ref` (React 19); `ButtonLink` replaces hand-typed `btn` class strings on links; `SubmitEvent` replaces the deprecated `FormEvent`. Every theory example is pinned in `src/verification/s13b-react-types.claims.test.tsx`.
+
+### Lectures
+
+| # | Type | Lecture | Track |
+|---|---|---|---|
+| 13B.01 | 📖 | How React's types work: `@types/react`, JSX checking, `ReactNode` vs `ReactElement` vs `JSX.Element` | ★ |
+| 13B.02 | 📖 | Typing props: optional/defaults, `children`, callbacks, discriminated-union props, XOR props with `never` | ★ |
+| 13B.03 | 📖 | DOM props: the `ComponentProps` family, `Omit` clashes, `ref` as a prop in React 19 | ★ |
+| 13B.04 | 📖🛠 | Event types: `SyntheticEvent` family, `target` vs `currentTarget`, handler aliases; migrate to `SubmitEvent` | ★ |
+| 13B.05 | 📖 | Refs: `useRef` overloads, callback refs + cleanup, `useImperativeHandle` | ★ |
+| 13B.06 | 📖 | Hooks: `useState` traps, `useReducer` (React 19 signature), effects, memo hooks, custom hook tuples | ★ |
+| 13B.07 | 📖 | Context: `null` default + guard hook, `createSafeContext<T>`, `<Context value>`, splitting contexts | ★ |
+| 13B.08 | 🛠 | Build: `isOneOf` + generic `SelectField<T>` | ★ |
+| 13B.09 | 🛠 | Build: `Button` with `ref`, `ButtonLink` via `ComponentProps<typeof Link>` | ★ |
+| 13B.10 | 📖 | Generic components: constraints, inference, `NoInfer`, `const T`, typed `DataTable<T>`, `memo` | ★ |
+| 13B.11 | 📖 | Polymorphic `as` components, and their trade-offs | ★ |
+| 13B.12 | 📖🛡 | Library types: React Router, styled-components, Axios, Vite, module augmentation; types are not validation | ★ |
+| 13B.13 | 📖 | Enterprise conventions: strict flags, `import type`, `any`/`as` policy, `satisfies`, branded ids, API types at scale | ★ |
+| 13B.14 | 📖 | Testing types: `expectTypeOf`, `@ts-expect-error`, CI | ★ |
+| 13B.15 | 🎯 | Your Turn: generic `ItemList<T>` | ★ |
+| 13B.16 | 💡 | Solution walkthrough | ★ |
+| 13B.17 | 🐞 | Debug: React 18 snippets on React 19 types | ★ |
+| 13B.A | 📇 | API reference | ★ |
+| 13B.99 | ✅ | Knowledge check | ★ |
+
+**Checkpoint:** `s13b-end`

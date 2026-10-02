@@ -1,0 +1,12 @@
+@use '../abstracts' as *;
+
+body {
+  font-family: $font-family-base;
+  font-size: to-rem(16px);
+  color: theme('text');
+  background: theme('background');
+}
+
+a {
+  color: theme('primary');
+}

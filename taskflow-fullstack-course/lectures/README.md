@@ -20,6 +20,7 @@ Full lecture content, one file per lecture. Solutions (💡) live in [`../soluti
 | [S11](S11-react-forms/11.01-controlled-uncontrolled.md) | Forms in React | ✅ Written |
 | [S12](S12-react-router/12.01-client-side-routing.md) | 🧩 React Router (v8, declarative mode) | ✅ Written |
 | [S13](S13-axios-mock-api/13.01-http-from-the-browser.md) | Axios and the Mock API | ✅ Written · [provided mock API](../provided/mock-api/) |
+| [S13B](S13B-react-typescript-types/13B.01-how-react-types-work.md) | React + TypeScript for Enterprise Codebases (types deep dive) | ✅ Written · [API reference](S13B-react-typescript-types/13B.A-react-types-api-reference.md) · [solution](../solutions/S13B-react-typescript-types/13B.16-solution.md) |
 | [S14](S14-redux-overview/14.01-what-is-redux.md) | R1: Redux Overview and Concepts (redux 5.0.1) | ✅ Written |
 | [S15](S15-state-actions-reducers/15.01-designing-state-values.md) | R2: State, Actions and Reducers | ✅ Written |
 | [S16](S16-the-store/16.01-store-job.md) | R3: The Store | ✅ Written |

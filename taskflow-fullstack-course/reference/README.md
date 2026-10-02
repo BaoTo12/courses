@@ -13,6 +13,8 @@ reference/
 │   ├── styles/               the SCSS design system (S01–S03)
 │   └── playground/           small standalone demos (e.g. the S14 redux-counter)
 ├── snapshots/                frozen source code at earlier checkpoints
+│   ├── s13-end/              frontend/ (src + configs) + styles/ at the end of S13 (Axios on the mock API, 29 tests)
+│   ├── s13b-end/             frontend/ at the end of S13B (React types: SelectField<T>, Button ref, ButtonLink, ItemList solution, claims, 77 tests)
 │   ├── s19-end/              app/ and features/ at the end of S19 (hand-written Redux)
 │   ├── s20-06-step1/         the tasks slice after 20.06 step 1 (createSlice, S19 event names)
 │   ├── s20-end/              the whole src/ at the end of S20 (Redux Toolkit)
