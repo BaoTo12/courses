@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.taskflow.db.S36LeastPrivilegeTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.47 s -- in com.taskflow.db.S36LeastPrivilegeTest

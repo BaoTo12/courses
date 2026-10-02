@@ -1,6 +1,0 @@
-/* S40 (40.10): the Admin Portal's few rules of its own. Moved out of style="…" attributes, which the
-   Content-Security-Policy (style-src 'self', no 'unsafe-inline') makes the browser ignore. */
-.inline-form { display: inline; }
-.page__nav-link.is-active { font-weight: 700; text-decoration: underline; }
-.flash { padding: 0.5rem 0.75rem; border-left: 4px solid currentColor; }
-.task-row--overdue td { font-weight: 600; }

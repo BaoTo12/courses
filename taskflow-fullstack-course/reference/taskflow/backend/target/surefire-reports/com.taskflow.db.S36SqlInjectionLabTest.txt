@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.taskflow.db.S36SqlInjectionLabTest
--------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.072 s -- in com.taskflow.db.S36SqlInjectionLabTest

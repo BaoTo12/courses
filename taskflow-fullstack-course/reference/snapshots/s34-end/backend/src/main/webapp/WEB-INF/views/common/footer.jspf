@@ -1,6 +1,0 @@
-<%-- S33 (33.10): the bottom of every page (see header.jspf). --%>
-  </main>
-  <footer class="page__footer">TaskFlow Admin</footer>
-</div>
-</body>
-</html>
